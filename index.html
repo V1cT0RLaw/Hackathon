@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Events — Attention Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar__inner">
+      <div class="brand">
+        <span class="brand__dot"></span>
+        <h1 class="brand__title">Event Attention</h1>
+      </div>
+      <div class="topbar__meta">
+        <span class="chip">Live</span>
+        <span class="topbar__count" id="eventCount">0 events</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="layout" id="layout">
+    <!-- Priority column: top 3 big cards -->
+    <section class="priority" aria-label="Priority events">
+      <div class="section-head">
+        <h2 class="section-head__title">Top Priority</h2>
+        <p class="section-head__sub">Highest attention events, ranked</p>
+      </div>
+      <div class="priority__list" id="priorityList">
+        <!-- big cards injected here -->
+      </div>
+    </section>
+
+    <!-- Minor column: smaller cards -->
+    <aside class="minor" aria-label="Other events">
+      <div class="section-head">
+        <h2 class="section-head__title">Other Events</h2>
+        <p class="section-head__sub">Lower attention, name &amp; score only</p>
+      </div>
+      <div class="minor__list" id="minorList">
+        <!-- small cards injected here -->
+      </div>
+    </aside>
+  </main>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
