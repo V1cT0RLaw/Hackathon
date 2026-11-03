@@ -20,6 +20,36 @@
     </div>
   </header>
 
+  <section class="filterbar" aria-label="Filter events">
+    <div class="filterbar__inner">
+      <div class="filterbar__heading">
+        <span class="filterbar__label">Filter events</span>
+        <span class="filterbar__result" id="filterResult">Showing all events</span>
+      </div>
+      <div class="filterbar__controls">
+        <label class="filter-control">
+          <span class="filter-control__label">Theme</span>
+          <select class="filter-control__select" id="themeFilter">
+            <option value="">All themes</option>
+          </select>
+        </label>
+        <label class="filter-control">
+          <span class="filter-control__label">Region</span>
+          <select class="filter-control__select" id="regionFilter">
+            <option value="">All regions</option>
+          </select>
+        </label>
+        <label class="filter-control">
+          <span class="filter-control__label">Stakeholder</span>
+          <select class="filter-control__select" id="stakeholderFilter">
+            <option value="">All stakeholders</option>
+          </select>
+        </label>
+        <button class="filter-reset" id="filterReset" type="button" disabled>Clear filters</button>
+      </div>
+    </div>
+  </section>
+
   <main class="layout" id="layout">
     <!-- Priority column: top 3 big cards -->
     <section class="priority" aria-label="Priority events">

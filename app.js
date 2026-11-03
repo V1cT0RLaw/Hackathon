@@ -20,8 +20,16 @@
     return typeof value === "string" && value.trim() ? value.trim() : fallback;
   }
 
+  function compact(values) {
+    return values.map((value) => cleanText(value)).filter(Boolean);
+  }
+
   function normalizeEvent(raw) {
     if (!raw || typeof raw !== "object") return null;
+
+    const id = cleanText(raw.id ?? raw["Event ID"]);
+    const classification = window.EVENT_CLASSIFICATION?.[id] || {};
+    const details = window.EVENT_DETAILS?.[id] || {};
 
     // Accept both the engine's spaced field names and the dashboard's compact schema.
     const actions = Array.isArray(raw.actions)
@@ -31,14 +39,31 @@
           raw["Recommended Action 2"],
           raw["Recommended Action 3"],
         ];
+    const rawRegions = Array.isArray(raw.regions)
+      ? raw.regions
+      : [
+          raw["Region Tag 1"],
+          raw["Region Tag 2"],
+          raw["Region Tag 3"],
+          raw["Region Tag 4"],
+          raw["Region Tag 5"],
+        ];
+    const rawStakeholders = Array.isArray(raw.stakeholders)
+      ? raw.stakeholders
+      : [
+          raw["Relevant Party 1"],
+          raw["Relevant Party 2"],
+          raw["Relevant Party 3"],
+        ];
 
     const event = {
-      id: cleanText(raw.id ?? raw["Event ID"]),
+      id,
       name: cleanText(raw.name ?? raw.Headline, "Untitled event"),
       summary: cleanText(raw.summary ?? raw.Summary, "No summary provided."),
-      actions: actions
-        .map((action) => cleanText(action))
-        .filter(Boolean),
+      actions: compact(actions),
+      theme: cleanText(raw.theme ?? raw.Theme ?? classification.theme, "Uncategorised"),
+      regions: compact(classification.regions || rawRegions),
+      stakeholders: compact(details.stakeholders || rawStakeholders),
       impact: parseScore(raw.impact ?? raw.Impact),
       confidence: parseScore(raw.confidence ?? raw.Confidence),
       relevance: parseScore(raw.relevance ?? raw.Relevance),
@@ -164,22 +189,45 @@
     return [];
   }
 
-  function render() {
-    const events = sourceEvents()
-      .map(normalizeEvent)
-      .filter(Boolean)
-      .map((event) => ({ ...event, _score: attentionScore(event) }));
-
-    events.sort(
-      (first, second) =>
-        second._score - first._score || first.id.localeCompare(second.id)
+  function uniqueSorted(values) {
+    return [...new Set(values.filter(Boolean))].sort((first, second) =>
+      first.localeCompare(second)
     );
+  }
 
-    const top = events.slice(0, 3);
-    const rest = events.slice(3);
+  function populateFilter(select, values) {
+    values.forEach((value) => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = value;
+      select.appendChild(option);
+    });
+  }
+
+  function selectedFilters() {
+    return {
+      theme: document.getElementById("themeFilter").value,
+      region: document.getElementById("regionFilter").value,
+      stakeholder: document.getElementById("stakeholderFilter").value,
+    };
+  }
+
+  function render(events) {
+    const filters = selectedFilters();
+    const hasFilters = Object.values(filters).some(Boolean);
+    const filtered = events.filter(
+      (event) =>
+        (!filters.theme || event.theme === filters.theme) &&
+        (!filters.region || event.regions.includes(filters.region)) &&
+        (!filters.stakeholder || event.stakeholders.includes(filters.stakeholder))
+    );
+    const top = filtered.slice(0, 3);
+    const rest = filtered.slice(3);
     const priorityList = document.getElementById("priorityList");
     const minorList = document.getElementById("minorList");
     const count = document.getElementById("eventCount");
+    const result = document.getElementById("filterResult");
+    const reset = document.getElementById("filterReset");
 
     priorityList.replaceChildren();
     minorList.replaceChildren();
@@ -193,17 +241,63 @@
 
     if (!top.length) {
       priorityList.appendChild(
-        element("p", "section-head__sub", "No events available.")
+        element("p", "filter-empty", "No events match these filters.")
       );
     }
     if (!rest.length) {
       minorList.appendChild(
-        element("p", "section-head__sub", "No other events.")
+        element("p", "section-head__sub", "No additional matching events.")
       );
     }
 
-    count.textContent = `${events.length} ${events.length === 1 ? "event" : "events"}`;
+    const eventLabel = filtered.length === 1 ? "event" : "events";
+    count.textContent = hasFilters
+      ? `${filtered.length} of ${events.length} events`
+      : `${events.length} events`;
+    result.textContent = hasFilters
+      ? `Showing ${filtered.length} ${eventLabel}`
+      : `Showing all ${events.length} events`;
+    reset.disabled = !hasFilters;
   }
 
-  document.addEventListener("DOMContentLoaded", render);
+  function initialize() {
+    const events = sourceEvents()
+      .map(normalizeEvent)
+      .filter(Boolean)
+      .map((event) => ({ ...event, _score: attentionScore(event) }));
+
+    events.sort(
+      (first, second) =>
+        second._score - first._score || first.id.localeCompare(second.id)
+    );
+
+    const themeFilter = document.getElementById("themeFilter");
+    const regionFilter = document.getElementById("regionFilter");
+    const stakeholderFilter = document.getElementById("stakeholderFilter");
+    const reset = document.getElementById("filterReset");
+
+    populateFilter(themeFilter, uniqueSorted(events.map((event) => event.theme)));
+    populateFilter(
+      regionFilter,
+      uniqueSorted(events.flatMap((event) => event.regions))
+    );
+    populateFilter(
+      stakeholderFilter,
+      uniqueSorted(events.flatMap((event) => event.stakeholders))
+    );
+
+    [themeFilter, regionFilter, stakeholderFilter].forEach((filter) => {
+      filter.addEventListener("change", () => render(events));
+    });
+    reset.addEventListener("click", () => {
+      themeFilter.value = "";
+      regionFilter.value = "";
+      stakeholderFilter.value = "";
+      render(events);
+    });
+
+    render(events);
+  }
+
+  document.addEventListener("DOMContentLoaded", initialize);
 })();

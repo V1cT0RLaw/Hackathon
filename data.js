@@ -790,3 +790,36 @@ window.EVENT_DETAILS = {
     ]
   }
 };
+
+// Theme and region classifications from the engine output.
+window.EVENT_CLASSIFICATION = {
+  "CG-2026-001": { theme: "Operations & Disruption", regions: ["SAMEA", "EUR", "GBA", "SEA&O"] },
+  "CG-2026-002": { theme: "Market & Demand", regions: ["GBA", "NEA", "SEA&O", "TAM", "Global"] },
+  "CG-2026-003": { theme: "Competitor & Industry", regions: ["GBA", "RCM", "SAMEA", "EUR"] },
+  "CG-2026-004": { theme: "Trade & Regulation", regions: ["EUR", "GBA", "RCM"] },
+  "CG-2026-005": { theme: "Network & Capacity", regions: ["GBA", "RCM"] },
+  "CG-2026-006": { theme: "Market & Demand", regions: ["TAM", "GBA", "RCM", "NEA", "SEA&O"] },
+  "CG-2026-007": { theme: "Safety & Compliance", regions: ["GBA", "RCM", "Global"] },
+  "CG-2026-008": { theme: "Network & Capacity", regions: ["SAMEA", "GBA", "EUR"] },
+  "CG-2026-009": { theme: "Market & Demand", regions: ["SEA&O", "GBA", "TAM", "EUR"] },
+  "CG-2026-010": { theme: "Operations & Disruption", regions: ["SAMEA", "EUR", "GBA"] },
+  "CG-2026-011": { theme: "Competitor & Industry", regions: ["RCM", "GBA", "EUR", "TAM"] },
+  "CG-2026-012": { theme: "Market & Demand", regions: ["Global", "GBA", "NEA", "EUR", "TAM"] },
+  "CG-2026-013": { theme: "Network & Capacity", regions: ["Global", "GBA", "EUR", "TAM"] },
+  "CG-2026-014": { theme: "Competitor & Industry", regions: ["GBA", "EUR", "SAMEA"] },
+  "CG-2026-015": { theme: "Technology & Innovation", regions: ["Global", "TAM", "GBA"] },
+  "CG-2026-016": { theme: "Product & Sustainability", regions: ["EUR", "SAMEA", "Global"] },
+  "CG-2026-017": { theme: "Competitor & Industry", regions: ["TAM", "EUR", "Global"] },
+  "CG-2026-018": { theme: "Competitor & Industry", regions: ["TAM", "GBA", "NEA", "Global"] },
+  "CG-2026-019": { theme: "Competitor & Industry", regions: ["TAM", "EUR", "NEA"] },
+  "CG-2026-020": { theme: "Operations & Disruption", regions: ["TAM"] },
+  "CG-2026-021": { theme: "Technology & Innovation", regions: ["TAM", "Global"] },
+  "CG-2026-022": { theme: "Competitor & Industry", regions: ["SAMEA", "TAM"] },
+  "CG-2026-023": { theme: "Competitor & Industry", regions: ["EUR", "GBA", "NEA", "TAM"] },
+  "CG-2026-024": { theme: "Competitor & Industry", regions: ["Global"] },
+  "CG-2026-025": { theme: "Competitor & Industry", regions: ["SAMEA", "GBA", "RCM"] },
+  "CG-2026-026": { theme: "Product & Sustainability", regions: ["Global"] },
+  "CG-2026-027": { theme: "Competitor & Industry", regions: ["SEA&O"] },
+  "CG-2026-028": { theme: "Competitor & Industry", regions: ["SAMEA"] },
+  "CG-2026-029": { theme: "Competitor & Industry", regions: ["SAMEA", "EUR"] }
+};

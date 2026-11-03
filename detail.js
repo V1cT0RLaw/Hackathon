@@ -53,6 +53,7 @@
 
     const id = text(raw.id ?? raw["Event ID"]);
     const storedDetails = window.EVENT_DETAILS?.[id] || {};
+    const classification = window.EVENT_CLASSIFICATION?.[id] || {};
     const rawDetails = detailsFromRaw(raw);
     const actions = Array.isArray(raw.actions)
       ? compact(raw.actions)
@@ -61,12 +62,22 @@
           raw["Recommended Action 2"],
           raw["Recommended Action 3"],
         ]);
+    const rawRegions = Array.isArray(raw.regions)
+      ? raw.regions
+      : [
+          raw["Region Tag 1"],
+          raw["Region Tag 2"],
+          raw["Region Tag 3"],
+          raw["Region Tag 4"],
+          raw["Region Tag 5"],
+        ];
 
     const event = {
       id,
       name: text(raw.name ?? raw.Headline, "Untitled event"),
       summary: text(raw.summary ?? raw.Summary, "No summary provided."),
       actions,
+      regions: compact(classification.regions || rawRegions),
       whyMatters: storedDetails.whyMatters || rawDetails.whyMatters,
       stakeholders: storedDetails.stakeholders || rawDetails.stakeholders,
       sources: storedDetails.sources || rawDetails.sources,
@@ -156,6 +167,18 @@
 
     document.title = `${event.name} — Event Attention`;
     content.append(eventId, title, summary);
+
+    if (event.regions.length) {
+      const regionMeta = node("div", "detail-regions");
+      const regionLabel = node("span", "detail-regions__label", "Regions");
+      const regionTags = node("div", "region-tags");
+
+      event.regions.forEach((region) => {
+        regionTags.appendChild(node("span", "region-tag", region));
+      });
+      regionMeta.append(regionLabel, regionTags);
+      content.appendChild(regionMeta);
+    }
 
     if (event.whyMatters.length) {
       columns.appendChild(
