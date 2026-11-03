@@ -137,6 +137,145 @@
     return row;
   }
 
+  function storedFeedback(eventId) {
+    try {
+      const feedback = JSON.parse(localStorage.getItem("eventFeedback") || "{}");
+      return feedback[eventId] || null;
+    } catch {
+      return null;
+    }
+  }
+
+  function saveFeedback(eventId, feedback) {
+    try {
+      const saved = JSON.parse(localStorage.getItem("eventFeedback") || "{}");
+      saved[eventId] = feedback;
+      localStorage.setItem("eventFeedback", JSON.stringify(saved));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  function createFeedbackSlider(label, initialValue, colorClass) {
+    const field = node("label", `feedback-score feedback-score--${colorClass}`);
+    const heading = node("span", "feedback-score__heading");
+    const labelNode = node("span", "feedback-score__label", label);
+    const output = node("output", "feedback-score__value", String(initialValue));
+    const input = node("input", "feedback-score__range");
+
+    input.type = "range";
+    input.min = "0";
+    input.max = "100";
+    input.step = "1";
+    input.value = String(initialValue);
+    input.name = label.toLowerCase();
+    input.setAttribute("aria-label", `${label} score`);
+    input.style.setProperty("--slider-progress", `${initialValue}%`);
+    input.addEventListener("input", () => {
+      output.value = input.value;
+      output.textContent = input.value;
+      input.style.setProperty("--slider-progress", `${input.value}%`);
+    });
+
+    heading.append(labelNode, output);
+    field.append(heading, input);
+    return { field, input, output };
+  }
+
+  function createFeedbackDialog(event, trigger, status) {
+    const existing = storedFeedback(event.id);
+    const startingScores = {
+      impact: existing?.impact ?? event.impact ?? 50,
+      relevance: existing?.relevance ?? event.relevance ?? 50,
+      confidence: existing?.confidence ?? event.confidence ?? 50,
+    };
+    const dialog = node("dialog", "feedback-dialog");
+    const form = node("form", "feedback-form");
+    const header = node("div", "feedback-form__header");
+    const eyebrow = node("span", "feedback-form__eyebrow", "Event feedback");
+    const title = node("h2", "feedback-form__title", "How would you score this event?");
+    const helper = node(
+      "p",
+      "feedback-form__helper",
+      "Adjust each pillar from 0 to 100, then add any context that may improve future scoring."
+    );
+    const scoreGrid = node("div", "feedback-score-grid");
+    const impact = createFeedbackSlider("Impact", startingScores.impact, "impact");
+    const relevance = createFeedbackSlider("Relevance", startingScores.relevance, "relevance");
+    const confidence = createFeedbackSlider(
+      "Confidence",
+      startingScores.confidence,
+      "confidence"
+    );
+    const commentField = node("label", "feedback-comment");
+    const commentLabel = node("span", "feedback-comment__label", "Why would you score it differently?");
+    const commentHint = node("span", "feedback-comment__hint", "Optional");
+    const textarea = node("textarea", "feedback-comment__input");
+    const actions = node("div", "feedback-form__actions");
+    const cancel = node("button", "feedback-button feedback-button--cancel", "Cancel");
+    const submit = node("button", "feedback-button feedback-button--submit", "Submit feedback");
+
+    dialog.setAttribute("aria-labelledby", "feedbackTitle");
+    title.id = "feedbackTitle";
+    form.noValidate = true;
+    textarea.name = "comment";
+    textarea.rows = 5;
+    textarea.maxLength = 1000;
+    textarea.placeholder = "Share what influenced your scores…";
+    textarea.value = existing?.comment || "";
+    cancel.type = "button";
+    submit.type = "submit";
+
+    header.append(eyebrow, title, helper);
+    scoreGrid.append(impact.field, relevance.field, confidence.field);
+    commentField.append(commentLabel, commentHint, textarea);
+    actions.append(cancel, submit);
+    form.append(header, scoreGrid, commentField, actions);
+    dialog.appendChild(form);
+
+    function setSlider(slider, value) {
+      slider.input.value = String(value);
+      slider.output.value = String(value);
+      slider.output.textContent = String(value);
+      slider.input.style.setProperty("--slider-progress", `${value}%`);
+    }
+
+    function resetDraft() {
+      const saved = storedFeedback(event.id);
+      setSlider(impact, saved?.impact ?? event.impact ?? 50);
+      setSlider(relevance, saved?.relevance ?? event.relevance ?? 50);
+      setSlider(confidence, saved?.confidence ?? event.confidence ?? 50);
+      textarea.value = saved?.comment || "";
+    }
+
+    cancel.addEventListener("click", () => dialog.close());
+    dialog.addEventListener("close", resetDraft);
+    dialog.addEventListener("click", (clickEvent) => {
+      if (clickEvent.target === dialog) dialog.close();
+    });
+    form.addEventListener("submit", (submitEvent) => {
+      submitEvent.preventDefault();
+      const feedback = {
+        impact: Number(impact.input.value),
+        relevance: Number(relevance.input.value),
+        confidence: Number(confidence.input.value),
+        comment: textarea.value.trim(),
+        submittedAt: new Date().toISOString(),
+      };
+
+      if (saveFeedback(event.id, feedback)) {
+        status.textContent = "Feedback saved on this device.";
+        trigger.textContent = "Edit feedback";
+        dialog.close();
+      } else {
+        status.textContent = "Feedback could not be saved in this browser.";
+      }
+    });
+
+    return dialog;
+  }
+
   function renderNotFound(id) {
     const main = document.getElementById("eventDetail");
     const card = node("section", "detail-card detail-empty");
@@ -179,6 +318,22 @@
       regionMeta.append(regionLabel, regionTags);
       content.appendChild(regionMeta);
     }
+
+    const feedbackArea = node("div", "feedback-entry");
+    const feedbackButton = node(
+      "button",
+      "feedback-trigger",
+      storedFeedback(event.id) ? "Edit feedback" : "Give feedback"
+    );
+    const feedbackStatus = node("span", "feedback-entry__status");
+    const feedbackDialog = createFeedbackDialog(event, feedbackButton, feedbackStatus);
+
+    feedbackButton.type = "button";
+    feedbackStatus.setAttribute("role", "status");
+    feedbackStatus.setAttribute("aria-live", "polite");
+    feedbackButton.addEventListener("click", () => feedbackDialog.showModal());
+    feedbackArea.append(feedbackButton, feedbackStatus);
+    content.appendChild(feedbackArea);
 
     if (event.whyMatters.length) {
       columns.appendChild(
@@ -234,6 +389,7 @@
     );
     card.append(content, scores);
     main.appendChild(card);
+    document.body.appendChild(feedbackDialog);
   }
 
   function render() {
