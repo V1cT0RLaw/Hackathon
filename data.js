@@ -400,3 +400,393 @@ window.EVENTS = [
     attention: 37
   }
 ];
+
+// Additional fields from the engine output used by the event detail page.
+window.EVENT_DETAILS = {
+  "CG-2026-001": {
+    whyMatters: [
+      "Severe reduction in Middle East carrier transfer capacity (up to 26% drop on Asia-Europe) shifts urgent shipper demand toward direct Asian operators",
+      "Airspace avoidance and longer flight routings increase fuel burn, block hours, and payload constraints on Europe-bound services",
+      "Stranded time-critical shipments (perishables, AOG aerospace parts) create immediate yield premiums and spot charter opportunities"
+    ],
+    stakeholders: ["Cargo Operations", "Network / Planning", "Revenue Management"],
+    sources: [
+      { title: "Perishables, Plane Parts Stranded as Middle East Conflict Hits Air Cargo", url: "https://www.reuters.com/business/aerospace-defense/perishables-plane-parts-stranded-middle-east-conflict-hits-air-cargo-2026-03-05/" },
+      { title: "Air Cargo Chaos: Capacity on Asia-Europe Drops 26%", url: "https://theloadstar.com/air-cargo-chaos-capacity-on-asia-europe-drops-26/" },
+      { title: "Air Cargo Rates Surge as Gulf Disruption Deepens and Capacity Reshapes Global Flows", url: "https://theloadstar.com/air-cargo-rates-surge-as-gulf-disruption-deepens-and-capacity-reshapes-global-flows/" },
+      { title: "Air Cargo Shippers Scramble to Mitigate Iran War Impacts", url: "https://www.freightwaves.com/news/air-cargo-shippers-scramble-to-mitigate-iran-war-impacts" },
+      { title: "2026 Air Cargo Rates Could Rise 15% Due to Iran War Impacts", url: "https://www.freightwaves.com/news/2026-air-cargo-rates-could-rise-15-due-to-iran-war-impacts" }
+    ]
+  },
+  "CG-2026-002": {
+    whyMatters: [
+      "Directly aligns with Cathay Cargo's core strengths in high-value, time-critical technology and semiconductor transport across NEA, GBA, and SEA&O",
+      "Provides a high-yield structural buffer to offset potential softening in low-value cross-border e-commerce parcels",
+      "Creates directional backhaul imbalances as heavy data-centre racks move into APAC hubs and out to North America"
+    ],
+    stakeholders: ["Commercial / Sales", "Product / Customer Experience", "Network / Planning"],
+    sources: [
+      { title: "AI Race Redraws Asian Air Cargo, Replacing E-Commerce Growth Engine", url: "https://www.reuters.com/business/aerospace-defense/ai-race-redraws-asian-air-cargo-replacing-e-commerce-growth-engine-2026-07-29/" },
+      { title: "Data Centre Boom Drives Air Cargo Growth and Widens Imbalances", url: "https://theloadstar.com/data-centre-boom-drives-air-cargo-growth-and-widens-imbalances/" },
+      { title: "Nippon Express Launches Transpacific Air Freight Service to Meet AI-Driven Demand", url: "https://www.supplychaindive.com/news/nippon-express-launches-transpacific-air-freight-service-to-meet-ai-driven/832399/" },
+      { title: "CEVA Provides Logistics Support for AirTrunk Data Centres in APAC", url: "https://www.aircargonews.net/freight-forwarder/2026/06/ceva-provides-logistics-support-for-airtrunk-data-centres-in-apac/" },
+      { title: "AI Drives Global Trade as Well as Air Cargo", url: "https://www.aircargonews.net/business/2026/10/ai-drives-global-trade-as-well-as-air-cargo/" }
+    ]
+  },
+  "CG-2026-003": {
+    whyMatters: [
+      "Direct tier-1 global cargo competitor establishing regional command directly inside Cathay Cargo's Hong Kong home hub",
+      "Intensifies competition for key freight forwarder accounts and sixth-freedom transit volumes connecting GBA to Europe and Middle East",
+      "Signals strong long-term industry conviction in Hong Kong's role as the premier APAC air cargo gateway"
+    ],
+    stakeholders: ["Commercial / Sales", "Network / Planning", "Revenue Management"],
+    sources: [
+      { title: "Qatar Airways Cargo to Expand Hong Kong Network as Regional Office Moves to City", url: "https://cargonewswire.com/qatar-airways-cargo-to-expand-hong-kong-network-as-regional-office-moves-to-city/" },
+      { title: "Qatar Cargo to Expand Hong Kong Operations", url: "https://www.aircargonews.net/cargo-airport/2026/08/qatar-cargo-to-expand-hong-kong-operations/" },
+      { title: "Qatar Airways Cargo Relocates Regional Office to Hong Kong", url: "https://www.thestandard.com.hk/news/article/340393/Qatar-Airways-Cargo-relocates-regional-office-to-Hong-Kong" }
+    ]
+  },
+  "CG-2026-004": {
+    whyMatters: [
+      "Cross-border e-commerce out of GBA and Chinese Mainland is a foundational volume pillar for HKG-Europe freighter and belly capacity",
+      "Per-parcel EUR 3 duty and stricter customs data filing may accelerate shift from direct B2C small parcels to consolidated B2B2C air/ocean warehousing",
+      "Heightens pre-departure customs data validation and security screening pressure at Hong Kong origin terminals"
+    ],
+    stakeholders: ["Compliance / Regulatory", "Commercial / Sales", "Revenue Management"],
+    sources: [
+      { title: "Air Cargo Sector Braces for EU €3 Parcel Duty from 1 July", url: "https://aircargoweek.com/air-cargo-sector-braces-for-eu-e3-parcel-duty-from-1-july/" },
+      { title: "EU Ends De Minimis Exemption for E-Commerce Air Cargo, Imposes €3 Duty on Low-Value Parcels", url: "https://www.indexbox.io/blog/eu-ends-de-minimis-exemption-for-e-commerce-air-cargo-imposes-3-duty-on-low-value-parcels/" },
+      { title: "Will Air Cargo Volumes Be Impacted by End of De Minimis in EU?", url: "https://www.aircargonews.net/e-commerce-logistics/2026/07/will-air-cargo-volumes-be-impacted-by-end-of-de-minis-in-eu/" },
+      { title: "EU €3 Customs Duty on Low-Value Parcels", url: "https://www.waredock.com/magazine/eu-3-customs-duty-low-value-parcels/" },
+      { title: "Netherlands Postpones E-Commerce Handling Fee Plans", url: "https://www.aircargonews.net/e-commerce-logistics/2026/01/netherlands-postpones-e-commerce-handling-fee-plans/" }
+    ]
+  },
+  "CG-2026-005": {
+    whyMatters: [
+      "Confirms the resilience and throughput leadership of Cathay Cargo's Hong Kong home hub amidst regional airport competition",
+      "Long-term stability in ground handling franchises (Hactl 15-year extension) ensures predictable ecosystem capacity at HKIA",
+      "Enhanced terminal e-commerce processing (Hacis upgrade) strengthens GBA intermodal feeder competitiveness"
+    ],
+    stakeholders: ["Hub / Ground Operations", "Commercial / Sales", "Network / Planning"],
+    sources: [
+      { title: "HKIA Busiest Cargo Airport for 15th Time with 5.1 Million Tonnes", url: "https://www.stattimes.com/air-cargo/hkia-busiest-cargo-airport-for-15th-time-51-million-tonnes-1359934" },
+      { title: "Hong Kong Retains Busiest Cargo Airport Title", url: "https://www.aircargonews.net/cargo-airport/2026/04/hong-kong-retains-busiest-cargo-airport-title/" },
+      { title: "Cargo Handler Hactl Extends Hong Kong Franchise for 15 Years", url: "https://www.aircargonews.net/cargo-handlers/2026/06/cargo-handler-hactl-extends-hong-kong-franchise-for-15-years/" },
+      { title: "Hacis Upgrades E-Commerce Shipment Processing", url: "https://www.aircargonews.net/e-commerce-logistics/2026/08/hacis-upgrades-e-commerce-shipment-processing/" },
+      { title: "HKIA Media Centre Press Release PR 1875", url: "https://www.hongkongairport.com/en/media-centre/press-release/2026/pr_1875" }
+    ]
+  },
+  "CG-2026-006": {
+    whyMatters: [
+      "Transpacific is Cathay Cargo's largest long-haul revenue corridor; capacity scarcity directly boosts spot yields and load factors",
+      "Divergence between surging Transpacific demand and softening HKG-Europe volumes requires agile fleet redeployment",
+      "Forwarder chartering of 777Fs (DHL) signals tight BSA (Blocked Space Agreement) availability on scheduled carriers"
+    ],
+    stakeholders: ["Revenue Management", "Network / Planning", "Commercial / Sales"],
+    sources: [
+      { title: "Transpacific Air Cargo Demand Outruns Capacity", url: "https://www.aircargonews.net/supply-chains/2026/10/transpacific-air-cargo-demand-outruns-capacity/" },
+      { title: "DHL Forwarding Charters 777 Cargo Jets to Beef Up Transpacific Capacity", url: "https://www.freightwaves.com/news/dhl-forwarding-charters-777-cargo-jets-to-beef-up-transpacific-capacity" },
+      { title: "Ocean Congestion and Tariffs Could See More Peak Air Volumes", url: "https://www.aircargonews.net/supply-chains/2026/10/ocean-congestion-and-tariffs-could-see-more-peak-air-volumes/" },
+      { title: "Airfreight Rates Ease After Golden Week as Peak Season Capacity Pressures Build", url: "https://cargonewswire.com/airfreight-rates-ease-after-golden-weekas-peak-season-capacity-pressures-build/" },
+      { title: "Hong Kong-Europe Air Cargo Volumes Plummet", url: "https://www.aircargonews.net/data/2026/07/hong-kong-europe-air-cargo-volumes-plummet/" }
+    ]
+  },
+  "CG-2026-007": {
+    whyMatters: [
+      "Hong Kong and GBA are the world's largest export hubs for electronics, power banks, and lithium-battery-powered goods",
+      "Undeclared or misdeclared lithium batteries pose catastrophic aviation safety risks to both freighters and passenger belly flights",
+      "Tighter 2026 shipping rules directly impact cargo acceptance screening, shipper compliance audits, and special handling procedures"
+    ],
+    stakeholders: ["Safety", "Compliance / Regulatory", "Hub / Ground Operations"],
+    sources: [
+      { title: "Lithium-Ion Battery Incidents in Air Cargo on the Rise", url: "https://www.aircargonews.net/cargo-airport/2026/03/lithium-ion-battery-incidents-in-air-cargo-on-the-rise/" },
+      { title: "New Shipping Rules Tighten for Lithium Batteries in 2026", url: "https://www.whalesbook.com/news/English/other/New-Shipping-Rules-Tighten-for-Lithium-Batteries-in-2026/6ac0ef0c5aacb956d08a594d" }
+    ]
+  },
+  "CG-2026-008": {
+    whyMatters: [
+      "Mumbai (BOM) is a critical South Asian freighter and belly-cargo station for Cathay Cargo's pharmaceutical and general cargo flows",
+      "Home-hub rival Hong Kong Air Cargo is aggressively expanding India capacity via NMIA and local GSSA partnerships",
+      "Infrastructure transition between BOM and NMIA creates ground handling, customs clearance, and cold-chain continuity risks"
+    ],
+    stakeholders: ["Network / Planning", "Cargo Operations", "Commercial / Sales"],
+    sources: [
+      { title: "Mumbai Airport Plans to Suspend Freighter Operations for 10 Months", url: "https://www.aircargonews.net/cargo-airport/2026/01/mumbai-airport-plans-to-suspend-freighter-operations-for-10-months/" },
+      { title: "Hong Kong Air Cargo Starts NMIA Freighter Operations", url: "https://www.stattimes.com/air-cargo/hong-kong-air-cargo-starts-nmia-freighter-operations-1360279" },
+      { title: "Lufthansa Cargo Expands Winter Network and Shifts Operations to Navi Mumbai", url: "https://container-news.com/lufthansa-cargo-expands-winter-network-and-shifts-operations-to-navi-mumbai/" },
+      { title: "Hong Kong Air Cargo Selects AeroPrime as It Targets India Growth", url: "https://www.aircargonews.net/gssa/2026/06/hong-kong-air-cargo-selects-aeroprime-as-it-targets-india-growth/" },
+      { title: "Lufthansa Cargo 2026-2027 Winter Flight Schedule Enhances Connectivity to Mumbai", url: "https://payloadasia.com/2026/10/lufthansa-cargo-2026-2027-winter-flight-schedule-enhances-connectivity-mumbai/" }
+    ]
+  },
+  "CG-2026-009": {
+    whyMatters: [
+      "Cathay Cargo relies heavily on sixth-freedom transit flows from Southeast Asia (Vietnam, Thailand, Malaysia, Singapore) via Hong Kong to North America and Europe",
+      "Factory relocations from Southern China to SEA shift origin demand profiles, requiring agile feeder capacity into HKG",
+      "Strengthens the strategic importance of Cathay Group's widebody passenger belly and freighter network across ASEAN"
+    ],
+    stakeholders: ["Network / Planning", "Commercial / Sales", "Revenue Management"],
+    sources: [
+      { title: "South-East Asia the Star Exporter Replacing E-Commerce in Air Cargo", url: "https://theloadstar.com/south-east-asia-the-star-exporter-replacing-ecommerce-in-air-cargo/" },
+      { title: "Vietnam Post Logistics International Air Freight Service 2026 Space Optimization", url: "https://vietnampostlogistics.com/en/international-air-freight-service-2026-space-optimization/" }
+    ]
+  },
+  "CG-2026-010": {
+    whyMatters: [
+      "Affects Cathay Cargo's Middle East network operations (Riyadh station) and regional interline/road-feeder connections",
+      "Terminal congestion and handling delays risk service continuity and SLA breaches for time-sensitive shipments into Saudi Arabia",
+      "Creates spillover capacity tightness across neighbouring Gulf hubs during peak season ramp-up"
+    ],
+    stakeholders: ["Cargo Operations", "Hub / Ground Operations", "Commercial / Sales"],
+    sources: [
+      { title: "Middle East Operational Update: Saudi Arabia Air Cargo Disruptions (October 9, 2026)", url: "https://info.expeditors.com/operational-impact/middle-east-operational-update-saudi-arabia-air-cargo-disruptions-october-9-2026" },
+      { title: "Saudi Disruption Squeezes Air Cargo Capacity as Peak Looms", url: "https://theloadstar.com/saudi-disruption-squeezes-air-cargo-capacity-as-peak-looms/" },
+      { title: "Cargo Operators Find Riyadh Workarounds, But at a Price", url: "https://www.agbi.com/logistics/2026/10/cargo-operators-find-riyadh-workarounds-but-at-a-price/" },
+      { title: "Saudi Arabian Airport Operations Disrupted", url: "https://www.aircargonews.net/cargo-airport/2026/10/saudi-arabian-airport-operations-disrupted/" }
+    ]
+  },
+
+  "CG-2026-011": {
+    whyMatters: [
+      "Expanded long-haul 777F capacity at mainland hubs (Beijing, Shanghai, Chengdu) competes for Chinese Mainland export volumes that might otherwise transit HKG",
+      "Strengthens state-owned mainland carrier competitiveness on flagship China-Europe and China-North America trunk routes",
+      "Signals sustained widebody freighter investment in the Rest of Chinese Mainland (RCM) market"
+    ],
+    stakeholders: ["Commercial / Sales", "Network / Planning", "Revenue Management"],
+    sources: [
+      { title: "Air China Cargo Adds 14th Boeing 777 Freighter as Fleet Expansion Continues", url: "https://cargonewswire.com/air-china-cargo-adds-14th-boeing-777-freighter-as-fleet-expansion-continues/" },
+      { title: "Air China Cargo Adds 14th 777F", url: "https://www.aircargonews.net/airlines/2026/10/air-china-cargo-adds-14th-777f/" },
+      { title: "Air China Cargo Adds 14th Boeing 777F", url: "https://www.stattimes.com/air-cargo/air-china-cargo-adds-14th-boeing-777f-1360861" }
+    ]
+  },
+  "CG-2026-012": {
+    whyMatters: [
+      "Provides authoritative macro baseline for Cathay Cargo's budget planning, capacity deployment, and yield benchmarking",
+      "Confirms that actual summer cargo demand significantly outpaced IATA's cautious June forecast of +0.2% volume growth",
+      "Demonstrates structural stability in air freight conversions despite geopolitical noise and tariff uncertainty"
+    ],
+    stakeholders: ["Revenue Management", "Commercial / Sales", "Network / Planning"],
+    sources: [
+      { title: "IATA Air Cargo Market Analysis - August 2026", url: "https://www.iata.org/en/publications/economics/reports/air-cargo-market-analysis-august-2026/" },
+      { title: "IATA Press Release: Air Cargo Demand Grows in August", url: "https://www.iata.org/en/pressroom/2026-releases/09-29-air-cargo-demand-grows-august/" },
+      { title: "Xeneta: Cut Out the Noise and Appreciate Air Cargo's Stability as Demand Grows 6% YoY in August", url: "https://www.xeneta.com/news/cut-out-the-noise-and-appreciate-air-cargo-s-stability-as-demand-grows-6-year-on-year-in-august" },
+      { title: "IATA Air Cargo Market Analysis - July 2026", url: "https://www.iata.org/en/publications/economics/reports/air-cargo-market-analysis-july-2026/" },
+      { title: "IATA Now Expects 0.2% Increase in 2026 Air Cargo Volumes", url: "https://www.aircargonews.net/iata/2026/06/iata-now-expects-0-2-increase-in-2026-air-cargo-volumes/" }
+    ]
+  },
+  "CG-2026-013": {
+    whyMatters: [
+      "Impacts long-term fleet replacement timelines and OEM delivery predictability across the global widebody freighter sector (including A350F/777-8F cycles)",
+      "Restricts industry-wide main-deck supply expansion, supporting higher structural load factors and yields for existing 747F operators like Cathay Cargo",
+      "Increases maintenance and engineering pressure to keep legacy widebody freighters operating at high utilization"
+    ],
+    stakeholders: ["Network / Planning", "Cargo Operations", "Revenue Management"],
+    sources: [
+      { title: "Slow Widebody Freighter Manufacturing Supply Chains Hamper Capacity", url: "https://www.aircargonews.net/iata-wcs/2026/03/slow-widebody-freighter-manufacturing-supply-chains-hamper-capacity/" },
+      { title: "Cargo Airlines Squeezed by 2026 Freighter Fleet Delays", url: "https://www.thetraveler.org/cargo-airlines-squeezed-by-2026-freighter-fleet-delays/" },
+      { title: "Future Freighter and Cargo Networks", url: "https://cargoforwarder.eu/2026/10/11/future-freighter-and-cargo-networks/" }
+    ]
+  },
+  "CG-2026-014": {
+    whyMatters: [
+      "Direct capacity expansion by a fellow Hong Kong-based all-cargo carrier competing for GBA origin freight",
+      "New routes to secondary Mediterranean and Levant gateways (Athens, Cyprus, Amman) may siphon niche regional transit cargo",
+      "Demonstrates continued fleet growth of A330 regional/medium-haul freighters out of HKIA"
+    ],
+    stakeholders: ["Commercial / Sales", "Network / Planning", "Revenue Management"],
+    sources: [
+      { title: "Hong Kong Air Cargo Adds Sixth A330 Freighter to Fleet", url: "https://www.aircargonews.net/freighter-operators/2026/01/hong-kong-air-cargo-adds-sixth-a330-freighter-to-fleet/" },
+      { title: "Athens Joins Hong Kong Air Cargo's Freighter Network", url: "https://www.aircargonews.net/freighter-operators/2026/01/athens-joins-hong-kong-air-cargos-freighter-network/" },
+      { title: "Hong Kong Air Cargo Adds Cyprus to Network", url: "https://www.aircargonews.net/freighter-operators/2026/02/hong-kong-air-cargo-adds-cyprus-to-network/" },
+      { title: "Hong Kong Air Cargo Adds Amman Freighter Flights", url: "https://www.aircargonews.net/freighter-operators/2026/01/hong-kong-air-cargo-adds-amman-freighter-flights/" },
+      { title: "New Carriers Come to Athens", url: "https://www.ekathimerini.com/economy/1316366/new-carriers-come-to-athens/" }
+    ]
+  },
+  "CG-2026-015": {
+    whyMatters: [
+      "Cathay Cargo is a leading global pioneer in IATA ONE Record and digital cargo standards; industry-wide adoption amplifies network interoperability",
+      "Automated Dangerous Goods verification (DG AutoCheck / DG Digital) directly reduces acceptance bottlenecks and human error for battery/DG shipments",
+      "Interline partners adopting digital standards streamline end-to-end data exchange across hubs"
+    ],
+    stakeholders: ["Digital / Technology", "Safety", "Cargo Operations"],
+    sources: [
+      { title: "IATA Launches DG Digital", url: "https://www.aircargonews.net/iata-wcs/2026/03/iata-launches-dg-digital/" },
+      { title: "LATAM Cargo Is First Americas Airline to Integrate IATA's DG AutoCheck", url: "https://www.aircargonews.net/dangerous-goods-management/2026/08/latam-cargo-is-first-americas-airline-to-integrate-iatas-dg-autocheck/" },
+      { title: "LATAM Cargo Integrates IATA's DG AutoCheck", url: "https://www.stattimes.com/air-cargo/latam-cargo-integrates-iatas-dg-autocheck-1360435" },
+      { title: "Video: How Can Air Cargo Benefit from ONE Record?", url: "https://www.aircargonews.net/iata-wcs/2026/03/video-how-can-air-cargo-benefit-from-one-record/" }
+    ]
+  },
+  "CG-2026-016": {
+    whyMatters: [
+      "Pharmaceuticals (Cathay Pharma) and Perishables (Cathay Fresh) are flagship high-margin specialist products for Cathay Cargo",
+      "Competitors aggressively marketing CEIV certifications raise baseline customer expectations for temperature-controlled SOPs and visibility",
+      "Geodis's certification in Hyderabad highlights surging Indian pharma export logistics demand"
+    ],
+    stakeholders: ["Product / Customer Experience", "Commercial / Sales", "Cargo Operations"],
+    sources: [
+      { title: "Lufthansa Cargo Achieves Dual IATA CEIV Pharma Certification", url: "https://www.aircargonews.net/pharma-logistics/2026/06/lufthansa-cargo-achieves-dual-iata-ceiv-pharma-certification/" },
+      { title: "Qatar Airways Cargo Secures IATA CEIV Fresh Recertification", url: "https://www.aircargonews.net/perishables/2026/06/qatar-airways-cargo-secures-iata-ceiv-fresh-recertification/" },
+      { title: "Geodis Achieves IATA CEIV Pharma Certification in India", url: "https://www.aircargonews.net/pharma-logistics/2026/07/geodis-achieves-iata-ceiv-pharma-certification-in-india/" },
+      { title: "Geodis Achieves IATA CEIV Pharma Certification in Hyderabad, India", url: "https://geodis.com/newsroom/geodis-achieves-iata-ceiv-pharma-certification-hyderabad-india-strengthening-commitment" },
+      { title: "IATA Reconfigures WCS Streams to Include Specialist Cargo", url: "https://www.aircargonews.net/iata-wcs/2026/01/iata-reconfigures-wcs-streams-to-include-specialist-cargo/" }
+    ]
+  },
+  "CG-2026-017": {
+    whyMatters: [
+      "Consolidates a major portion of the world's outsourced widebody 747/777 ACMI freighter fleet under two closely aligned operators",
+      "Reduces independent wet-lease options for competing airlines and e-commerce charterers on Asia-Europe and Transpacific lanes",
+      "Could increase charter/ACMI wet-lease pricing floors globally during peak seasons"
+    ],
+    stakeholders: ["Network / Planning", "Commercial / Sales", "Revenue Management"],
+    sources: [
+      { title: "US's Atlas Air Acquires 49% of Iceland's Air Atlanta", url: "https://www.ch-aviation.com/news/167761-uss-atlas-air-acquires-49-of-icelands-air-atlanta" },
+      { title: "Atlas Air to Acquire 49% Stake in Air Atlanta", url: "https://www.aviationbusinessnews.com/cargo/aircraft-airlines/atlas-air-to-acquire-49-stake-in-air-atlanta" },
+      { title: "Atlas Air Worldwide Acquires 49% Stake in ACMI Provider Air Atlanta", url: "https://thelogisticnews.com/atlas-air-worldwide-acquires-49-stake-in-acmi-provider-air-atlanta/" }
+    ]
+  },
+  "CG-2026-018": {
+    whyMatters: [
+      "Cathay Cargo is a major launch customer for the Airbus A350F; growing global operator adoption strengthens the A350F MRO, spares, and support ecosystem",
+      "Kalitta Air is a heavyweight Transpacific charter/ACMI operator frequently competing or partnering on Asia-US corridors",
+      "Signals shifting widebody freighter market share toward the next-generation A350F platform"
+    ],
+    stakeholders: ["Network / Planning", "Cargo Operations", "Sustainability"],
+    sources: [
+      { title: "US-Based Kalitta Air Orders Airbus Freighter Jets, Sources Say", url: "https://www.reuters.com/business/aerospace-defense/us-based-kalitta-air-orders-airbus-freighter-jets-sources-say-2026-10-09/" },
+      { title: "Kalitta Air Reportedly Behind Airbus A350F Order Despite Boeing-Dominated Fleet", url: "https://www.airdatanews.com/kalitta-air-reportedly-behind-airbus-a350-f-order-despite-boeing-dominated-fleet/" },
+      { title: "Kalitta Air Reportedly Orders 8 Airbus A350 Freighters as Boeing Dominance Faces Challenge", url: "https://breakbulk.news/kalitta-air-reportedly-orders-8-airbus-a350-freighters-as-boeing-dominance-faces-challenge/" }
+    ]
+  },
+  "CG-2026-019": {
+    whyMatters: [
+      "29% Q3 cargo revenue growth at a major US combination carrier confirms robust North American inbound/outbound air freight yields",
+      "Demonstrates how passenger widebody belly networks are aggressively capturing market share via third-party digital marketplaces (CargoAI)",
+      "Provides a financial benchmark for Q3 2026 combination-carrier cargo performance"
+    ],
+    stakeholders: ["Revenue Management", "Digital / Technology", "Commercial / Sales"],
+    sources: [
+      { title: "Delta Reports 29% Increase in Q3 Cargo Revenue", url: "https://cargofacts.com/allposts/carriers/delta-reports-29-increase-in-q3-cargo-revenue/" },
+      { title: "Delta Air Lines Cargo Revenue Rises 29% in Third Quarter", url: "https://cargonewswire.com/delta-air-lines-cargo-revenue-rises-29-in-third-quarter/" },
+      { title: "Delta Air Lines Reports Another Strong Increase in Cargo Revenues", url: "https://www.aircargonews.net/airlines/2026/10/delta-air-lines-reports-another-strong-increase-in-cargo-revenues/" },
+      { title: "Delta Cargo Partners with CargoAI to Expand Digital Booking Capabilities", url: "https://www.aircargonews.net/technology/2026/04/delta-cargo-partners-with-cargoai-to-expand-digital-booking-capabilities/" },
+      { title: "Delta Cargo and CargoAI Partnership 2026", url: "https://www.cargoai.co/press/delta-cargo-cargoai-partnership-2026/" }
+    ]
+  },
+  "CG-2026-020": {
+    whyMatters: [
+      "North America (TAM) is a core destination market for Cathay Cargo's freighter and passenger belly network",
+      "Domestic US flight and ground disruptions delay onward interline transfers and customs clearance for inbound Asian freight",
+      "Forwarder dissatisfaction creates opportunities for carriers offering reliable direct-to-gateway freighter services (e.g., ORD, JFK, LAX, DFW, MIA)"
+    ],
+    stakeholders: ["Cargo Operations", "Hub / Ground Operations", "Commercial / Sales"],
+    sources: [
+      { title: "US Forwarders Call for Action After Monday's Flight Disruption", url: "https://www.aircargonews.net/freight-forwarder/2026/09/us-forwarders-call-for-action-after-mondays-flight-disruption/" }
+    ]
+  },
+
+  "CG-2026-021": {
+    whyMatters: [
+      "Illustrates practical AI deployment in air cargo documentation, customs compliance, and value-added cargo insurance workflows",
+      "Forwarders using AI customs auditing (Flexport) will demand higher data accuracy in electronic Air Waybills (e-AWB) and house manifests",
+      "Insurtech automation lowers friction for shippers purchasing all-risk coverage on high-value air freight"
+    ],
+    stakeholders: ["Digital / Technology", "Compliance / Regulatory", "Product / Customer Experience"],
+    sources: [
+      { title: "Flexport Launches AI Technology to Spot Customs Errors and Prepare Tariff Refunds", url: "https://www.aircargonews.net/technology/2026/02/flexport-launches-ai-technology-to-spot-customs-errors-and-prepare-tariff-refunds/" },
+      { title: "Breeze Launches AI Tool to Cut Cargo Insurance Admin Work", url: "https://www.aircargonews.net/technology/2026/06/breeze-launches-ai-tool-to-cut-cargo-insurance-admin-work/" },
+      { title: "Breeze Launches Quote AI Autofill to Cut Cargo Insurance Admin Work", url: "https://www.ajot.com/news/breeze-launches-quote-ai-autofill-to-cut-cargo-insurance-admin-work" },
+      { title: "Awery Scoops a Fifth Hackathon Win", url: "https://www.aircargonews.net/technology/2026/04/awery-scoops-a-fifth-hackathon-win/" },
+      { title: "Breeze Launches AI Tool (NewsBreak coverage)", url: "https://www.newsbreak.com/news/4726612493331-breeze-launches-ai-tool-to-cut-cargo-insurance-admin-work" }
+    ]
+  },
+  "CG-2026-022": {
+    whyMatters: [
+      "Major Middle Eastern rival strengthening Asia-to-South America sixth-freedom connectivity via Dubai",
+      "Competes with Cathay Cargo's North American transhipment hubs (e.g., Miami/LAX interline gateways) for Asia-Latin America trade flows",
+      "Highlights strong growth in Latin American perishables exports to Asian consumer markets"
+    ],
+    stakeholders: ["Network / Planning", "Commercial / Sales", "Revenue Management"],
+    sources: [
+      { title: "Emirates SkyCargo Accelerates Export Growth in South America", url: "https://payloadasia.com/2026/10/emirates-skycargo-accelerates-export-growth-south-america/" },
+      { title: "Fleet Expansion Fuels Emirates SkyCargo's South American Demand Growth", url: "https://www.aircargonews.net/freighter-operator/2026/10/fleet-expansion-fuels-emirates-skycargos-south-american-demand-growth/" },
+      { title: "Emirates SkyCargo Expands South America Network as Exports Surge", url: "https://container-news.com/emirates-skycargo-expands-south-america-network-as-exports-surge/" }
+    ]
+  },
+  "CG-2026-023": {
+    whyMatters: [
+      "Ocean-liner-backed air cargo carrier expanding long-haul 777F capacity on core Asia-Europe and Transpacific corridors",
+      "Competes for global freight forwarder and direct shipper accounts seeking integrated sea-air multimodal solutions",
+      "Adds incremental main-deck widebody supply out of major Asian export hubs including Hong Kong"
+    ],
+    stakeholders: ["Commercial / Sales", "Network / Planning", "Revenue Management"],
+    sources: [
+      { title: "MSC Takes Delivery of Seventh 777-200F", url: "https://www.aircargonews.net/freighter-operators/2026/03/msc-takes-delivery-of-seventh-777-200f/" }
+    ]
+  },
+  "CG-2026-024": {
+    whyMatters: [
+      "Joint cargo ventures and commercial alliances alter competitive dynamics and interline bargaining power",
+      "Pooled network capacity can offer forwarders single-desk booking across multiple regional networks",
+      "Provides a structural case study for combination-carrier cargo partnerships"
+    ],
+    stakeholders: ["Network / Planning", "Commercial / Sales", "Revenue Management"],
+    sources: [
+      { title: "Airline Trio Take Final Steps Towards Launch of Joint Cargo Business", url: "https://www.freightwaves.com/news/airline-trio-take-final-steps-towards-launch-of-joint-cargo-business" }
+    ]
+  },
+  "CG-2026-025": {
+    whyMatters: [
+      "Ethiopian Airlines is a major carrier on China/Hong Kong-to-Africa and Latin America corridors",
+      "Long-term fleet growth increases sixth-freedom competition via Addis Ababa for China-Africa e-commerce and general cargo",
+      "Reflects growing air trade connectivity between Chinese Mainland/GBA and emerging African markets"
+    ],
+    stakeholders: ["Network / Planning", "Commercial / Sales"],
+    sources: [
+      { title: "Ethiopian Airlines Nears Boeing Cargo Plane Order, Sources Say", url: "https://www.reuters.com/business/aerospace-defense/ethiopian-airlines-nears-boeing-cargo-plane-order-sources-say-2026-09-02/" },
+      { title: "Ethiopian Airlines Nears Boeing Cargo Plane Order, Sources Say (US News)", url: "https://money.usnews.com/investing/news/articles/2026-09-02/ethiopian-airlines-nears-boeing-cargo-plane-order-sources-say" }
+    ]
+  },
+  "CG-2026-026": {
+    whyMatters: [
+      "Demonstrates niche market demand for heavy, outsized project cargo and nose-loading/charter capabilities",
+      "ACS is an active global charter broker customer that occasionally books ad-hoc freighter charters",
+      "Limited structural impact on scheduled network operations"
+    ],
+    stakeholders: ["Commercial / Sales", "Product / Customer Experience"],
+    sources: [
+      { title: "ACS Moves Machinery with Air Cargo Charter", url: "https://www.aircargonews.net/editorial/2026/06/acs-moves-machinery-with/" }
+    ]
+  },
+  "CG-2026-027": {
+    whyMatters: [
+      "Narrowbody 737-800BCF operation is confined to domestic New Zealand and short-haul trans-Tasman routes",
+      "Does not compete with Cathay Cargo's long-haul widebody belly or freighter trunk services between HKG and Oceania",
+      "May provide minor regional feeder/interline connectivity within Australasia"
+    ],
+    stakeholders: ["Network / Planning"],
+    sources: [
+      { title: "Texel Air Welcomes Second 737-800BCF to New Zealand Fleet", url: "https://avitrader.com/2026/10/12/texel-air-welcomes-second-737-800bcf-to-new-zealand-fleet/" },
+      { title: "Texel Air Australasia Adds 737-800 Boeing Converted Freighter", url: "https://www.aircargonews.net/freighter-operator/2026/10/texel-air-australasia-adds-737-800-boeing-converted-freighter/" },
+      { title: "Texel Air Australasia Inducts New Boeing 737-800BCF for NZ Fleet", url: "https://asianaviation.com/posts/texel-air-australasia-inducts-new-boeing-737-800bcf-for-nz-fleet" }
+    ]
+  },
+  "CG-2026-028": {
+    whyMatters: [
+      "Early-stage regional startup carrier in the UAE with no immediate fleet scale or overlap with Cathay Cargo's trunk routes",
+      "Illustrates continued investor interest in Middle East air logistics"
+    ],
+    stakeholders: ["Network / Planning"],
+    sources: [
+      { title: "UAE's Hili Cargo Aircraft Enters Certification", url: "https://www.logupdateafrica.com/air-cargo/uaes-hili-cargo-aircraft-enters-certification-1359852" }
+    ]
+  },
+  "CG-2026-029": {
+    whyMatters: [
+      "Purely commemorative milestone regarding a West African regional airline and its GSSA",
+      "No direct network overlap, competitive threat, or operational consequence for Cathay Cargo"
+    ],
+    stakeholders: ["Commercial / Sales"],
+    sources: [
+      { title: "ECS Group Marks Seven Years of Air Senegal Cargo Partnership", url: "https://www.logupdateafrica.com/air-cargo/ecs-group-marks-seven-years-of-air-senegal-cargo-partnership-1360629" }
+    ]
+  }
+};

@@ -98,7 +98,8 @@
 
   function bigCard(event, rank) {
     const score = event._score;
-    const card = element("article", "card card--big");
+    const card = element("a", "card card--big card--clickable");
+    card.href = `detail.html?id=${encodeURIComponent(event.id)}`;
     const main = element("div", "card__main");
     const rankLabel = element("div", "card__rank");
     const rankNumber = element("span", "card__rank-num", String(rank));
@@ -144,7 +145,8 @@
 
   function smallCard(event) {
     const score = event._score;
-    const card = element("article", "card card--small");
+    const card = element("a", "card card--small card--clickable");
+    card.href = `detail.html?id=${encodeURIComponent(event.id)}`;
     const name = element("span", "card--small__name", event.name);
     const scoreLabel = element("span", `card--small__score ${toneClass(score)}`);
     const denominator = element("small", "", "/100");
