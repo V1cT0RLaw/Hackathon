@@ -27,47 +27,58 @@
   function normalizeEvent(raw) {
     if (!raw || typeof raw !== "object") return null;
 
-    const id = cleanText(raw.id ?? raw["Event ID"]);
+    const id = cleanText(raw.id ?? raw["Event ID"] ?? raw.event_id);
     const classification = window.EVENT_CLASSIFICATION?.[id] || {};
     const details = window.EVENT_DETAILS?.[id] || {};
+    const scoreData = raw.scores || raw;
 
-    // Accept both the engine's spaced field names and the dashboard's compact schema.
+    // Accept the Test 2 schema, the earlier engine fields, and compact dashboard data.
     const actions = Array.isArray(raw.actions)
       ? raw.actions
-      : [
-          raw["Recommended Action 1"],
-          raw["Recommended Action 2"],
-          raw["Recommended Action 3"],
-        ];
+      : Array.isArray(raw.recommended_actions)
+        ? raw.recommended_actions
+        : [
+            raw["Recommended Action 1"],
+            raw["Recommended Action 2"],
+            raw["Recommended Action 3"],
+          ];
     const rawRegions = Array.isArray(raw.regions)
       ? raw.regions
-      : [
-          raw["Region Tag 1"],
-          raw["Region Tag 2"],
-          raw["Region Tag 3"],
-          raw["Region Tag 4"],
-          raw["Region Tag 5"],
-        ];
+      : Array.isArray(raw.region_tags)
+        ? raw.region_tags
+        : [
+            raw["Region Tag 1"],
+            raw["Region Tag 2"],
+            raw["Region Tag 3"],
+            raw["Region Tag 4"],
+            raw["Region Tag 5"],
+          ];
     const rawStakeholders = Array.isArray(raw.stakeholders)
       ? raw.stakeholders
-      : [
-          raw["Relevant Party 1"],
-          raw["Relevant Party 2"],
-          raw["Relevant Party 3"],
-        ];
+      : Array.isArray(raw.relevant_parties)
+        ? raw.relevant_parties
+        : [
+            raw["Relevant Party 1"],
+            raw["Relevant Party 2"],
+            raw["Relevant Party 3"],
+          ];
 
     const event = {
       id,
-      name: cleanText(raw.name ?? raw.Headline, "Untitled event"),
+      name: cleanText(raw.name ?? raw.Headline ?? raw.headline, "Untitled event"),
       summary: cleanText(raw.summary ?? raw.Summary, "No summary provided."),
       actions: compact(actions),
       theme: cleanText(raw.theme ?? raw.Theme ?? classification.theme, "Uncategorised"),
       regions: compact(classification.regions || rawRegions),
       stakeholders: compact(details.stakeholders || rawStakeholders),
-      impact: parseScore(raw.impact ?? raw.Impact),
-      confidence: parseScore(raw.confidence ?? raw.Confidence),
-      relevance: parseScore(raw.relevance ?? raw.Relevance),
-      attention: parseScore(raw.attention ?? raw.Attention),
+      impact: parseScore(scoreData.calibrated_impact ?? scoreData.impact ?? raw.Impact),
+      confidence: parseScore(
+        scoreData.calibrated_confidence ?? scoreData.confidence ?? raw.Confidence
+      ),
+      relevance: parseScore(
+        scoreData.calibrated_relevance ?? scoreData.relevance ?? raw.Relevance
+      ),
+      attention: parseScore(scoreData.attention ?? raw.Attention),
     };
 
     const hasRequiredScores = [event.impact, event.confidence, event.relevance].every(

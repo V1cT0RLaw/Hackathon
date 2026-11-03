@@ -25,66 +25,95 @@
   }
 
   function detailsFromRaw(raw) {
-    const sources = [];
+    const numberedSources = [];
 
     for (let index = 1; index <= 5; index += 1) {
       const title = text(raw[`Source ${index} Title`]);
       const url = text(raw[`Source ${index} URL`]);
-      if (title && url) sources.push({ title, url });
+      if (title && url) numberedSources.push({ title, url });
     }
 
+    const structuredSources = Array.isArray(raw.sources)
+      ? raw.sources
+          .map((source) => ({
+            title: text(source?.title),
+            url: text(source?.url),
+          }))
+          .filter((source) => source.title && source.url)
+      : [];
+
     return {
-      whyMatters: compact([
-        raw["Why it matters 1"],
-        raw["Why it matters 2"],
-        raw["Why it matters 3"],
-      ]),
-      stakeholders: compact([
-        raw["Relevant Party 1"],
-        raw["Relevant Party 2"],
-        raw["Relevant Party 3"],
-      ]),
-      sources,
+      whyMatters: Array.isArray(raw.why_it_matters)
+        ? compact(raw.why_it_matters)
+        : compact([
+            raw["Why it matters 1"],
+            raw["Why it matters 2"],
+            raw["Why it matters 3"],
+          ]),
+      stakeholders: Array.isArray(raw.relevant_parties)
+        ? compact(raw.relevant_parties)
+        : compact([
+            raw["Relevant Party 1"],
+            raw["Relevant Party 2"],
+            raw["Relevant Party 3"],
+          ]),
+      sources: structuredSources.length ? structuredSources : numberedSources,
     };
   }
 
   function normalizeEvent(raw) {
     if (!raw || typeof raw !== "object") return null;
 
-    const id = text(raw.id ?? raw["Event ID"]);
+    const id = text(raw.id ?? raw["Event ID"] ?? raw.event_id);
     const storedDetails = window.EVENT_DETAILS?.[id] || {};
     const classification = window.EVENT_CLASSIFICATION?.[id] || {};
     const rawDetails = detailsFromRaw(raw);
+    const scoreData = raw.scores || raw;
     const actions = Array.isArray(raw.actions)
       ? compact(raw.actions)
-      : compact([
-          raw["Recommended Action 1"],
-          raw["Recommended Action 2"],
-          raw["Recommended Action 3"],
-        ]);
+      : Array.isArray(raw.recommended_actions)
+        ? compact(raw.recommended_actions)
+        : compact([
+            raw["Recommended Action 1"],
+            raw["Recommended Action 2"],
+            raw["Recommended Action 3"],
+          ]);
     const rawRegions = Array.isArray(raw.regions)
       ? raw.regions
-      : [
-          raw["Region Tag 1"],
-          raw["Region Tag 2"],
-          raw["Region Tag 3"],
-          raw["Region Tag 4"],
-          raw["Region Tag 5"],
-        ];
+      : Array.isArray(raw.region_tags)
+        ? raw.region_tags
+        : [
+            raw["Region Tag 1"],
+            raw["Region Tag 2"],
+            raw["Region Tag 3"],
+            raw["Region Tag 4"],
+            raw["Region Tag 5"],
+          ];
+    const relatedReferences = Array.isArray(raw.relatedPastEvents)
+      ? raw.relatedPastEvents
+      : Array.isArray(raw.related_past_events)
+        ? raw.related_past_events
+        : null;
 
     const event = {
       id,
-      name: text(raw.name ?? raw.Headline, "Untitled event"),
+      name: text(raw.name ?? raw.Headline ?? raw.headline, "Untitled event"),
       summary: text(raw.summary ?? raw.Summary, "No summary provided."),
       actions,
       regions: compact(classification.regions || rawRegions),
       whyMatters: storedDetails.whyMatters || rawDetails.whyMatters,
       stakeholders: storedDetails.stakeholders || rawDetails.stakeholders,
       sources: storedDetails.sources || rawDetails.sources,
-      attention: score(raw.attention ?? raw.Attention),
-      impact: score(raw.impact ?? raw.Impact),
-      relevance: score(raw.relevance ?? raw.Relevance),
-      confidence: score(raw.confidence ?? raw.Confidence),
+      relatedReferences,
+      calibrationReason: text(raw.calibration_reason),
+      attention: score(scoreData.attention ?? raw.Attention),
+      impact: score(scoreData.calibrated_impact ?? scoreData.impact ?? raw.Impact),
+      relevance: score(
+        scoreData.calibrated_relevance ?? scoreData.relevance ?? raw.Relevance
+      ),
+      confidence: score(
+        scoreData.calibrated_confidence ?? scoreData.confidence ?? raw.Confidence
+      ),
     };
 
     return event.id ? event : null;
@@ -98,9 +127,25 @@
   }
 
   function sourceEvents() {
-    if (Array.isArray(window.EVENTS)) return window.EVENTS;
-    if (Array.isArray(window.EVENT_DATA?.events)) return window.EVENT_DATA.events;
-    return [];
+    const current = Array.isArray(window.EVENTS)
+      ? window.EVENTS
+      : Array.isArray(window.EVENT_DATA?.events)
+        ? window.EVENT_DATA.events
+        : [];
+    const historical = Array.isArray(window.PAST_EVENTS)
+      ? window.PAST_EVENTS
+      : Array.isArray(window.EVENT_DATA?.past_events)
+        ? window.EVENT_DATA.past_events
+        : [];
+    const embeddedRelated = [...current, ...historical].flatMap((event) =>
+      Array.isArray(event?.related_past_events)
+        ? event.related_past_events.filter(
+            (reference) => reference && typeof reference === "object"
+          )
+        : []
+    );
+
+    return [...current, ...historical, ...embeddedRelated];
   }
 
   function createHeader() {
@@ -327,6 +372,101 @@
     return dialog;
   }
 
+  function scoreTone(value) {
+    if (value >= 75) return "tone-high";
+    if (value >= 50) return "tone-mid";
+    return "tone-low";
+  }
+
+  function stableHash(value) {
+    let hash = 2166136261;
+    for (let index = 0; index < value.length; index += 1) {
+      hash ^= value.charCodeAt(index);
+      hash = Math.imul(hash, 16777619);
+    }
+    return hash >>> 0;
+  }
+
+  function mockRelatedCases(event, catalog) {
+    const unique = new Map();
+    catalog.forEach((candidate) => {
+      if (candidate.id && candidate.id !== event.id) unique.set(candidate.id, candidate);
+    });
+
+    return [...unique.values()]
+      .sort(
+        (first, second) =>
+          stableHash(`${event.id}:${first.id}`) - stableHash(`${event.id}:${second.id}`)
+      )
+      .slice(0, 10);
+  }
+
+  function relatedCasesFor(event, catalog) {
+    if (event.relatedReferences === null) {
+      return { cases: mockRelatedCases(event, catalog), isDemo: true };
+    }
+
+    const byId = new Map(catalog.map((candidate) => [candidate.id, candidate]));
+    const resolved = event.relatedReferences
+      .map((reference) => {
+        if (typeof reference === "string") {
+          return byId.get(reference) || {
+            id: reference,
+            name: reference,
+            attention: null,
+            unavailable: true,
+          };
+        }
+        return normalizeEvent(reference);
+      })
+      .filter((candidate) => candidate && candidate.id !== event.id);
+    const unique = new Map(resolved.map((candidate) => [candidate.id, candidate]));
+
+    return { cases: [...unique.values()], isDemo: false };
+  }
+
+  function createRelatedCases(event, catalog) {
+    const related = relatedCasesFor(event, catalog);
+    const section = node("section", "related-cases");
+    const header = node("div", "related-cases__header");
+    const heading = node("h2", "related-cases__title", "Related cases");
+    const list = node("div", "related-cases__list");
+
+    header.appendChild(heading);
+    if (related.isDemo) {
+      header.appendChild(node("span", "related-cases__demo", "Demo data"));
+    }
+
+    if (!related.cases.length) {
+      list.appendChild(
+        node("p", "related-cases__empty", "No related cases are available.")
+      );
+    }
+
+    related.cases.forEach((relatedEvent) => {
+      const card = node(
+        relatedEvent.unavailable ? "div" : "a",
+        `related-case${relatedEvent.unavailable ? " related-case--unavailable" : ""}`
+      );
+      const title = node("span", "related-case__title", relatedEvent.name);
+      const scoreValue = relatedEvent.attention;
+      const scoreLabel = node(
+        "span",
+        `related-case__score ${scoreValue === null ? "" : scoreTone(scoreValue)}`,
+        scoreValue === null ? "Unavailable" : String(scoreValue)
+      );
+
+      if (!relatedEvent.unavailable) {
+        card.href = `detail.html?id=${encodeURIComponent(relatedEvent.id)}`;
+      }
+      card.append(title, scoreLabel);
+      list.appendChild(card);
+    });
+
+    section.append(header, list);
+    return section;
+  }
+
   function renderNotFound(id) {
     const main = document.getElementById("eventDetail");
     const card = node("section", "detail-card detail-empty");
@@ -343,7 +483,7 @@
     main.appendChild(card);
   }
 
-  function renderEvent(event) {
+  function renderEvent(event, catalog) {
     const main = document.getElementById("eventDetail");
     const card = node("article", "detail-card");
     const content = node("div", "detail-content");
@@ -374,6 +514,7 @@
     const feedbackButton = node("button", "feedback-trigger", "Give feedback");
     const feedbackStatus = node("span", "feedback-entry__status");
     const feedbackDialog = createFeedbackDialog(event, feedbackStatus);
+    const relatedCases = createRelatedCases(event, catalog);
 
     feedbackButton.type = "button";
     feedbackStatus.setAttribute("role", "status");
@@ -432,7 +573,8 @@
       createScoreRow("Impact", event.impact, "impact"),
       createScoreRow("Relevance", event.relevance, "relevance"),
       createScoreRow("Confidence", event.confidence, "confidence"),
-      feedbackArea
+      feedbackArea,
+      relatedCases
     );
     card.append(content, scores);
     main.appendChild(card);
@@ -443,11 +585,10 @@
     createHeader();
 
     const id = new URLSearchParams(window.location.search).get("id");
-    const event = sourceEvents()
-      .map(normalizeEvent)
-      .find((candidate) => candidate?.id === id);
+    const catalog = sourceEvents().map(normalizeEvent).filter(Boolean);
+    const event = catalog.find((candidate) => candidate.id === id);
 
-    if (event) renderEvent(event);
+    if (event) renderEvent(event, catalog);
     else renderNotFound(id);
   }
 
