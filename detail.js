@@ -109,12 +109,24 @@
     const brand = node("a", "brand brand--link");
     const dot = node("span", "brand__dot");
     const title = node("span", "brand__title", "Event Attention");
+    const actions = node("div", "topbar__actions");
+    const toggle = node("label", "score-toggle");
+    const toggleInput = node("input", "score-toggle__input");
+    const toggleSwitch = node("span", "score-toggle__switch");
+    const toggleLabel = node("span", "score-toggle__label", "Show minor scores");
     const back = node("a", "back-link", "Back to all events");
 
     brand.href = "index.html";
     back.href = "index.html";
+    toggleInput.id = "minorScoreToggle";
+    toggleInput.type = "checkbox";
+    toggleInput.setAttribute("aria-label", "Show minor scores");
+    toggleSwitch.setAttribute("aria-hidden", "true");
+    window.MinorScorePreference.bind(toggleInput);
     brand.append(dot, title);
-    inner.append(brand, back);
+    toggle.append(toggleInput, toggleSwitch, toggleLabel);
+    actions.append(toggle, back);
+    inner.append(brand, actions);
     header.appendChild(inner);
   }
 
@@ -128,12 +140,30 @@
     return section;
   }
 
-  function createScoreRow(label, value, colorClass) {
+  function createScoreRow(label, value, pillar) {
     const row = node("div", "detail-score-row");
-    const labelNode = node("span", `detail-score-row__label ${colorClass}`, label);
+    const labelNode = node(
+      "span",
+      `detail-score-row__label detail-score-row__label--${pillar}`,
+      label
+    );
     const valueNode = node("strong", "detail-score-row__value", String(value ?? "—"));
+    const track = node("div", "detail-score-row__track");
+    const fill = node(
+      "div",
+      `detail-score-row__fill detail-score-row__fill--${pillar}`
+    );
 
-    row.append(labelNode, valueNode);
+    track.setAttribute("role", "progressbar");
+    track.setAttribute("aria-label", `${label} score`);
+    track.setAttribute("aria-valuemin", "0");
+    track.setAttribute("aria-valuemax", "100");
+    if (value !== null) {
+      track.setAttribute("aria-valuenow", String(value));
+      fill.style.width = `${value}%`;
+    }
+    track.appendChild(fill);
+    row.append(labelNode, valueNode, track);
     return row;
   }
 
@@ -400,9 +430,9 @@
     scores.append(
       scoreHeading,
       attention,
-      createScoreRow("Impact", event.impact, "detail-score-row__label--impact"),
-      createScoreRow("Relevance", event.relevance, "detail-score-row__label--relevance"),
-      createScoreRow("Confidence", event.confidence, "detail-score-row__label--confidence")
+      createScoreRow("Impact", event.impact, "impact"),
+      createScoreRow("Relevance", event.relevance, "relevance"),
+      createScoreRow("Confidence", event.confidence, "confidence")
     );
     card.append(content, scores);
     main.appendChild(card);

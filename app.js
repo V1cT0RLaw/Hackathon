@@ -114,6 +114,11 @@
 
     name.append(dot, document.createTextNode(label));
     row.append(name, score);
+    track.setAttribute("role", "progressbar");
+    track.setAttribute("aria-label", `${label} score`);
+    track.setAttribute("aria-valuemin", "0");
+    track.setAttribute("aria-valuemax", "100");
+    track.setAttribute("aria-valuenow", String(value));
     fill.style.width = `${value}%`;
     track.appendChild(fill);
     subscore.append(row, track);
@@ -275,7 +280,9 @@
     const regionFilter = document.getElementById("regionFilter");
     const stakeholderFilter = document.getElementById("stakeholderFilter");
     const reset = document.getElementById("filterReset");
+    const minorScoreToggle = document.getElementById("minorScoreToggle");
 
+    window.MinorScorePreference.bind(minorScoreToggle);
     populateFilter(themeFilter, uniqueSorted(events.map((event) => event.theme)));
     populateFilter(
       regionFilter,
