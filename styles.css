@@ -873,3 +873,18 @@ body {
   .topbar__meta { gap: 8px; }
   .chip { display: none; }
 }
+
+/* Keep the detail feedback action with the scores it evaluates. */
+.detail-scores .feedback-entry {
+  align-items: stretch;
+  flex-direction: column;
+  gap: 9px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.detail-scores .feedback-trigger { width: 100%; }
+.detail-scores .feedback-entry__status {
+  line-height: 1.45;
+  text-align: center;
+}

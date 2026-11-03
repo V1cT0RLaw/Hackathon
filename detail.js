@@ -380,7 +380,6 @@
     feedbackStatus.setAttribute("aria-live", "polite");
     feedbackButton.addEventListener("click", () => feedbackDialog.showModal());
     feedbackArea.append(feedbackButton, feedbackStatus);
-    content.appendChild(feedbackArea);
 
     if (event.whyMatters.length) {
       columns.appendChild(
@@ -432,7 +431,8 @@
       attention,
       createScoreRow("Impact", event.impact, "impact"),
       createScoreRow("Relevance", event.relevance, "relevance"),
-      createScoreRow("Confidence", event.confidence, "confidence")
+      createScoreRow("Confidence", event.confidence, "confidence"),
+      feedbackArea
     );
     card.append(content, scores);
     main.appendChild(card);
