@@ -137,23 +137,44 @@
     return row;
   }
 
-  function storedFeedback(eventId) {
+  function feedbackEntries() {
     try {
-      const feedback = JSON.parse(localStorage.getItem("eventFeedback") || "{}");
-      return feedback[eventId] || null;
+      const saved = JSON.parse(localStorage.getItem("eventFeedback") || "[]");
+      if (Array.isArray(saved)) return saved;
+
+      // Preserve records created by the earlier one-feedback-per-event prototype.
+      return Object.entries(saved).map(([eventId, feedback], index) => ({
+        feedback_id: `LEGACY-${index + 1}`,
+        event_id: eventId,
+        scores: {
+          impact: feedback.impact,
+          relevance: feedback.relevance,
+          confidence: feedback.confidence,
+        },
+        comment: feedback.comment || "",
+        submitted_at: feedback.submittedAt || "",
+      }));
     } catch {
-      return null;
+      return [];
     }
   }
 
-  function saveFeedback(eventId, feedback) {
+  function appendFeedback(eventId, response) {
     try {
-      const saved = JSON.parse(localStorage.getItem("eventFeedback") || "{}");
-      saved[eventId] = feedback;
+      const saved = feedbackEntries();
+      const uniquePart = globalThis.crypto?.randomUUID?.() ||
+        `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+      saved.push({
+        feedback_id: `FB-${uniquePart}`,
+        event_id: eventId,
+        scores: response.scores,
+        comment: response.comment,
+        submitted_at: new Date().toISOString(),
+      });
       localStorage.setItem("eventFeedback", JSON.stringify(saved));
-      return true;
+      return saved.filter((entry) => entry.event_id === eventId).length;
     } catch {
-      return false;
+      return null;
     }
   }
 
@@ -183,12 +204,11 @@
     return { field, input, output };
   }
 
-  function createFeedbackDialog(event, trigger, status) {
-    const existing = storedFeedback(event.id);
+  function createFeedbackDialog(event, status) {
     const startingScores = {
-      impact: existing?.impact ?? event.impact ?? 50,
-      relevance: existing?.relevance ?? event.relevance ?? 50,
-      confidence: existing?.confidence ?? event.confidence ?? 50,
+      impact: event.impact ?? 50,
+      relevance: event.relevance ?? 50,
+      confidence: event.confidence ?? 50,
     };
     const dialog = node("dialog", "feedback-dialog");
     const form = node("form", "feedback-form");
@@ -223,7 +243,7 @@
     textarea.rows = 5;
     textarea.maxLength = 1000;
     textarea.placeholder = "Share what influenced your scores…";
-    textarea.value = existing?.comment || "";
+    textarea.value = "";
     cancel.type = "button";
     submit.type = "submit";
 
@@ -242,11 +262,10 @@
     }
 
     function resetDraft() {
-      const saved = storedFeedback(event.id);
-      setSlider(impact, saved?.impact ?? event.impact ?? 50);
-      setSlider(relevance, saved?.relevance ?? event.relevance ?? 50);
-      setSlider(confidence, saved?.confidence ?? event.confidence ?? 50);
-      textarea.value = saved?.comment || "";
+      setSlider(impact, event.impact ?? 50);
+      setSlider(relevance, event.relevance ?? 50);
+      setSlider(confidence, event.confidence ?? 50);
+      textarea.value = "";
     }
 
     cancel.addEventListener("click", () => dialog.close());
@@ -256,17 +275,19 @@
     });
     form.addEventListener("submit", (submitEvent) => {
       submitEvent.preventDefault();
-      const feedback = {
-        impact: Number(impact.input.value),
-        relevance: Number(relevance.input.value),
-        confidence: Number(confidence.input.value),
+      const response = {
+        scores: {
+          impact: Number(impact.input.value),
+          relevance: Number(relevance.input.value),
+          confidence: Number(confidence.input.value),
+        },
         comment: textarea.value.trim(),
-        submittedAt: new Date().toISOString(),
       };
+      const responseCount = appendFeedback(event.id, response);
 
-      if (saveFeedback(event.id, feedback)) {
-        status.textContent = "Feedback saved on this device.";
-        trigger.textContent = "Edit feedback";
+      if (responseCount !== null) {
+        const label = responseCount === 1 ? "response" : "responses";
+        status.textContent = `Feedback submitted. ${responseCount} ${label} saved on this device.`;
         dialog.close();
       } else {
         status.textContent = "Feedback could not be saved in this browser.";
@@ -320,13 +341,9 @@
     }
 
     const feedbackArea = node("div", "feedback-entry");
-    const feedbackButton = node(
-      "button",
-      "feedback-trigger",
-      storedFeedback(event.id) ? "Edit feedback" : "Give feedback"
-    );
+    const feedbackButton = node("button", "feedback-trigger", "Give feedback");
     const feedbackStatus = node("span", "feedback-entry__status");
-    const feedbackDialog = createFeedbackDialog(event, feedbackButton, feedbackStatus);
+    const feedbackDialog = createFeedbackDialog(event, feedbackStatus);
 
     feedbackButton.type = "button";
     feedbackStatus.setAttribute("role", "status");
