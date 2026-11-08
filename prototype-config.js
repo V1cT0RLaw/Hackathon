@@ -41,9 +41,9 @@ window.PROTOTYPE_SCORE_CONFIG = {
   edition2SpreadAttention: {
     // Display scores are intentionally spread for the prototype while preserving
     // the post-removal Edition 2 total average (2,199 / 29 = 75.83).
-    "CG-2026-140": 97,
-    "CG-2026-150": 95,
-    "CG-2026-122": 96,
+    "CG-2026-140": 94,
+    "CG-2026-150": 94,
+    "CG-2026-122": 94,
     "CG-2026-123": 91,
     "CG-2026-124": 90,
     "CG-2026-138": 91,
@@ -64,11 +64,11 @@ window.PROTOTYPE_SCORE_CONFIG = {
     "CG-2026-128": 64,
     "CG-2026-136": 65,
     "CG-2026-142": 63,
-    "CG-2026-129": 59,
-    "CG-2026-132": 59,
-    "CG-2026-143": 55,
-    "CG-2026-146": 56,
-    "CG-2026-134": 52,
-    "CG-2026-144": 41
+    "CG-2026-129": 60,
+    "CG-2026-132": 60,
+    "CG-2026-143": 56,
+    "CG-2026-146": 57,
+    "CG-2026-134": 53,
+    "CG-2026-144": 42
   },
 };

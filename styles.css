@@ -1286,3 +1286,65 @@ body {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
+
+/* ---------- Light display theme ---------- */
+:root {
+  color-scheme: light;
+  --bg: #f4f7fb;
+  --surface: #ffffff;
+  --surface-2: #eef2f7;
+  --border: #d7dee8;
+  --text: #1f2937;
+  --text-dim: #5b677a;
+  --text-faint: #7b8798;
+  --accent: #2563eb;
+  --impact: #2e8b83;
+  --confidence: #a8925e;
+  --relevance: #9f2940;
+  --shadow: 0 1px 2px rgba(15,23,42,.08), 0 8px 24px rgba(15,23,42,.08);
+}
+
+body { background: var(--bg); color: var(--text); }
+.topbar {
+  background: rgba(255,255,255,.9);
+  border-bottom-color: var(--border);
+}
+.filterbar {
+  background: rgba(255,255,255,.94);
+  border-bottom-color: var(--border);
+}
+.card,
+.detail-card,
+.feedback-dialog { box-shadow: var(--shadow); }
+.card--clickable:hover,
+.card--big:hover,
+.card--small:hover { border-color: #9fb1c8; }
+.attention,
+.detail-scores { background: var(--surface-2); }
+.subscore__track,
+.detail-score-row__track { background: #dbe2ec; }
+.card--small__score,
+.actions__item,
+.related-case,
+.filter-menu__options,
+.feedback-score,
+.feedback-comment__input,
+.filter-empty { background: var(--surface-2); }
+.feedback-dialog { background: var(--surface); border-color: #b9c6d6; }
+.feedback-dialog::backdrop { background: rgba(15,23,42,.35); }
+.feedback-score__range { background: linear-gradient(to right, var(--slider-color) 0, var(--slider-color) var(--slider-progress), #cbd5e1 var(--slider-progress), #cbd5e1 100%); }
+.score-toggle__switch { background: #cbd5e1; border-color: #aebccc; }
+.score-toggle__switch::after { background: #64748b; }
+.score-toggle__input:checked + .score-toggle__switch { background: #bfdbfe; border-color: var(--accent); }
+.related-case:hover { border-color: #9fb1c8; }
+.filter-menu__trigger { background: var(--surface-2); border-color: var(--border); }
+.filter-menu__options { border-color: #b9c6d6; box-shadow: 0 14px 34px rgba(15,23,42,.16); }
+.filter-option__marker { background: var(--surface); border-color: #aebccc; }
+.source-link { color: #1d4ed8; }
+.source-link:hover { color: #1e40af; }
+.feedback-trigger,
+.feedback-button--submit,
+.detail-button { background: #2563eb; }
+.feedback-trigger:hover,
+.feedback-button--submit:hover,
+.detail-button:hover { background: #1d4ed8; }
