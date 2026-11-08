@@ -71,6 +71,7 @@
       theme: cleanText(raw.theme ?? raw.Theme ?? classification.theme, "Uncategorised"),
       regions: compact(classification.regions || rawRegions),
       stakeholders: compact(details.stakeholders || rawStakeholders),
+      testPhase: raw.test_phase === "test_2" ? "test_2" : "test_1",
       impact: parseScore(scoreData.calibrated_impact ?? scoreData.impact ?? raw.Impact),
       confidence: parseScore(
         scoreData.calibrated_confidence ?? scoreData.confidence ?? raw.Confidence
@@ -89,7 +90,7 @@
   }
 
   function calculatedAttention(event) {
-    const weights = { impact: 0.45, confidence: 0.2, relevance: 0.35 };
+    const weights = { impact: 0.4, confidence: 0.2, relevance: 0.4 };
     return Math.round(
       event.impact * weights.impact +
         event.confidence * weights.confidence +
@@ -144,6 +145,11 @@
     const main = element("div", "card__main");
     const rankLabel = element("div", "card__rank");
     const rankNumber = element("span", "card__rank-num", String(rank));
+    const phaseBadge = element(
+      "span",
+      `phase-badge phase-badge--${event.testPhase}`,
+      event.testPhase === "test_2" ? "Test 2" : "Test 1"
+    );
     const title = element("h3", "card__title", event.name);
     const summary = element("p", "card__summary", event.summary);
     const attention = element("div", "attention");
@@ -156,7 +162,11 @@
     const attentionLabel = element("div", "attention__label", "Attention");
     const subscores = element("div", "subscores");
 
-    rankLabel.append(rankNumber, document.createTextNode(" PRIORITY"));
+    rankLabel.append(
+      rankNumber,
+      document.createTextNode(" PRIORITY"),
+      phaseBadge
+    );
     main.append(rankLabel, title, summary);
 
     if (event.actions.length) {
@@ -188,21 +198,36 @@
     const score = event._score;
     const card = element("a", "card card--small card--clickable");
     card.href = `detail.html?id=${encodeURIComponent(event.id)}`;
+    const main = element("span", "card--small__main");
+    const phaseBadge = element(
+      "span",
+      `phase-badge phase-badge--${event.testPhase}`,
+      event.testPhase === "test_2" ? "Test 2" : "Test 1"
+    );
     const name = element("span", "card--small__name", event.name);
     const scoreLabel = element("span", `card--small__score ${toneClass(score)}`);
     const denominator = element("small", "", "/100");
 
     name.title = event.name;
+    main.append(phaseBadge, name);
     scoreLabel.append(document.createTextNode(String(score)), denominator);
-    card.append(name, scoreLabel);
+    card.append(main, scoreLabel);
 
     return card;
   }
 
   function sourceEvents() {
-    if (Array.isArray(window.EVENTS)) return window.EVENTS;
-    if (Array.isArray(window.EVENT_DATA?.events)) return window.EVENT_DATA.events;
-    return [];
+    const test1 = Array.isArray(window.EVENTS) ? window.EVENTS : [];
+    const test2 = Array.isArray(window.PHASE2_EVENTS) ? window.PHASE2_EVENTS : [];
+    const fallback = !test1.length && !test2.length && Array.isArray(window.EVENT_DATA?.events)
+      ? window.EVENT_DATA.events
+      : [];
+
+    return [
+      ...test1.map((event) => ({ ...event, test_phase: "test_1" })),
+      ...test2.map((event) => ({ ...event, test_phase: "test_2" })),
+      ...fallback,
+    ];
   }
 
   function uniqueSorted(values) {
@@ -222,6 +247,7 @@
 
   function selectedFilters() {
     return {
+      testPhase: document.getElementById("testFilter").value,
       theme: document.getElementById("themeFilter").value,
       region: document.getElementById("regionFilter").value,
       stakeholder: document.getElementById("stakeholderFilter").value,
@@ -233,6 +259,7 @@
     const hasFilters = Object.values(filters).some(Boolean);
     const filtered = events.filter(
       (event) =>
+        (!filters.testPhase || event.testPhase === filters.testPhase) &&
         (!filters.theme || event.theme === filters.theme) &&
         (!filters.region || event.regions.includes(filters.region)) &&
         (!filters.stakeholder || event.stakeholders.includes(filters.stakeholder))
@@ -287,6 +314,7 @@
         second._score - first._score || first.id.localeCompare(second.id)
     );
 
+    const testFilter = document.getElementById("testFilter");
     const themeFilter = document.getElementById("themeFilter");
     const regionFilter = document.getElementById("regionFilter");
     const stakeholderFilter = document.getElementById("stakeholderFilter");
@@ -304,10 +332,11 @@
       uniqueSorted(events.flatMap((event) => event.stakeholders))
     );
 
-    [themeFilter, regionFilter, stakeholderFilter].forEach((filter) => {
+    [testFilter, themeFilter, regionFilter, stakeholderFilter].forEach((filter) => {
       filter.addEventListener("change", () => render(events));
     });
     reset.addEventListener("click", () => {
+      testFilter.value = "";
       themeFilter.value = "";
       regionFilter.value = "";
       stakeholderFilter.value = "";

@@ -67,6 +67,7 @@
     const id = text(raw.id ?? raw["Event ID"] ?? raw.event_id);
     const storedDetails = window.EVENT_DETAILS?.[id] || {};
     const classification = window.EVENT_CLASSIFICATION?.[id] || {};
+    const historicalReview = window.TEST1_REASSESSMENTS?.[id];
     const rawDetails = detailsFromRaw(raw);
     const scoreData = raw.scores || raw;
     const actions = Array.isArray(raw.actions)
@@ -93,7 +94,9 @@
       ? raw.relatedPastEvents
       : Array.isArray(raw.related_past_events)
         ? raw.related_past_events
-        : null;
+        : historicalReview
+          ? historicalReview.related_phase2_events.map((related) => related.event_id)
+          : null;
 
     const event = {
       id,
@@ -105,7 +108,13 @@
       stakeholders: storedDetails.stakeholders || rawDetails.stakeholders,
       sources: storedDetails.sources || rawDetails.sources,
       relatedReferences,
+      testPhase: raw.test_phase === "test_2" ? "test_2" : "test_1",
       calibrationReason: text(raw.calibration_reason),
+      originalScores: {
+        impact: score(scoreData.impact ?? raw.Impact),
+        relevance: score(scoreData.relevance ?? raw.Relevance),
+        confidence: score(scoreData.confidence ?? raw.Confidence),
+      },
       attention: score(scoreData.attention ?? raw.Attention),
       impact: score(scoreData.calibrated_impact ?? scoreData.impact ?? raw.Impact),
       relevance: score(
@@ -126,12 +135,25 @@
     return element;
   }
 
+  function createPhaseBadge(event) {
+    return node(
+      "span",
+      `phase-badge phase-badge--${event.testPhase}`,
+      event.testPhase === "test_2" ? "Test 2" : "Test 1"
+    );
+  }
+
   function sourceEvents() {
-    const current = Array.isArray(window.EVENTS)
-      ? window.EVENTS
-      : Array.isArray(window.EVENT_DATA?.events)
-        ? window.EVENT_DATA.events
-        : [];
+    const test1 = Array.isArray(window.EVENTS) ? window.EVENTS : [];
+    const test2 = Array.isArray(window.PHASE2_EVENTS) ? window.PHASE2_EVENTS : [];
+    const fallback = !test1.length && !test2.length && Array.isArray(window.EVENT_DATA?.events)
+      ? window.EVENT_DATA.events
+      : [];
+    const current = [
+      ...test1.map((event) => ({ ...event, test_phase: "test_1" })),
+      ...test2.map((event) => ({ ...event, test_phase: "test_2" })),
+      ...fallback,
+    ];
     const historical = Array.isArray(window.PAST_EVENTS)
       ? window.PAST_EVENTS
       : Array.isArray(window.EVENT_DATA?.past_events)
@@ -378,32 +400,9 @@
     return "tone-low";
   }
 
-  function stableHash(value) {
-    let hash = 2166136261;
-    for (let index = 0; index < value.length; index += 1) {
-      hash ^= value.charCodeAt(index);
-      hash = Math.imul(hash, 16777619);
-    }
-    return hash >>> 0;
-  }
-
-  function mockRelatedCases(event, catalog) {
-    const unique = new Map();
-    catalog.forEach((candidate) => {
-      if (candidate.id && candidate.id !== event.id) unique.set(candidate.id, candidate);
-    });
-
-    return [...unique.values()]
-      .sort(
-        (first, second) =>
-          stableHash(`${event.id}:${first.id}`) - stableHash(`${event.id}:${second.id}`)
-      )
-      .slice(0, 10);
-  }
-
   function relatedCasesFor(event, catalog) {
     if (event.relatedReferences === null) {
-      return { cases: mockRelatedCases(event, catalog), isDemo: true };
+      return { cases: [], isDemo: false };
     }
 
     const byId = new Map(catalog.map((candidate) => [candidate.id, candidate]));
@@ -414,6 +413,7 @@
             id: reference,
             name: reference,
             attention: null,
+            testPhase: event.testPhase === "test_2" ? "test_1" : "test_2",
             unavailable: true,
           };
         }
@@ -433,9 +433,6 @@
     const list = node("div", "related-cases__list");
 
     header.appendChild(heading);
-    if (related.isDemo) {
-      header.appendChild(node("span", "related-cases__demo", "Demo data"));
-    }
 
     if (!related.cases.length) {
       list.appendChild(
@@ -449,6 +446,7 @@
         `related-case${relatedEvent.unavailable ? " related-case--unavailable" : ""}`
       );
       const title = node("span", "related-case__title", relatedEvent.name);
+      const main = node("span", "related-case__main");
       const scoreValue = relatedEvent.attention;
       const scoreLabel = node(
         "span",
@@ -459,7 +457,8 @@
       if (!relatedEvent.unavailable) {
         card.href = `detail.html?id=${encodeURIComponent(relatedEvent.id)}`;
       }
-      card.append(title, scoreLabel);
+      main.append(createPhaseBadge(relatedEvent), title);
+      card.append(main, scoreLabel);
       list.appendChild(card);
     });
 
@@ -487,7 +486,8 @@
     const main = document.getElementById("eventDetail");
     const card = node("article", "detail-card");
     const content = node("div", "detail-content");
-    const eventId = node("p", "detail-event-id", event.id);
+    const eventMeta = node("div", "detail-event-meta");
+    const eventId = node("span", "detail-event-id", event.id);
     const title = node("h1", "detail-title", event.name);
     const summary = node("p", "detail-summary", event.summary);
     const columns = node("div", "detail-columns");
@@ -496,7 +496,8 @@
     const attention = node("div", "detail-scores__attention", String(event.attention ?? "—"));
 
     document.title = `${event.name} — Event Attention`;
-    content.append(eventId, title, summary);
+    eventMeta.append(eventId, createPhaseBadge(event));
+    content.append(eventMeta, title, summary);
 
     if (event.regions.length) {
       const regionMeta = node("div", "detail-regions");
@@ -508,6 +509,30 @@
       });
       regionMeta.append(regionLabel, regionTags);
       content.appendChild(regionMeta);
+    }
+
+    if (event.calibrationReason) {
+      const calibration = node("section", "calibration-note");
+      const calibrationTitle = node("h2", "calibration-note__title", "Calibration");
+      const comparison = node("div", "calibration-note__scores");
+      const reason = node("p", "calibration-note__reason", event.calibrationReason);
+      const comparisons = [
+        ["Impact", event.originalScores.impact, event.impact],
+        ["Relevance", event.originalScores.relevance, event.relevance],
+        ["Confidence", event.originalScores.confidence, event.confidence],
+      ];
+
+      comparisons.forEach(([label, original, calibrated]) => {
+        comparison.appendChild(
+          node(
+            "span",
+            "calibration-note__score",
+            `${label}: ${original ?? "—"} → ${calibrated ?? "—"}`
+          )
+        );
+      });
+      calibration.append(calibrationTitle, comparison, reason);
+      content.appendChild(calibration);
     }
 
     const feedbackArea = node("div", "feedback-entry");
