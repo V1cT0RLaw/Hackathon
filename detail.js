@@ -103,6 +103,7 @@
       name: text(raw.name ?? raw.Headline ?? raw.headline, "Untitled event"),
       summary: text(raw.summary ?? raw.Summary, "No summary provided."),
       actions,
+      theme: text(raw.theme ?? raw.Theme ?? classification.theme, "Uncategorised"),
       regions: compact(classification.regions || rawRegions),
       whyMatters: storedDetails.whyMatters || rawDetails.whyMatters,
       stakeholders: storedDetails.stakeholders || rawDetails.stakeholders,
@@ -139,7 +140,7 @@
     return node(
       "span",
       `phase-badge phase-badge--${event.testPhase}`,
-      event.testPhase === "test_2" ? "Test 2" : "Test 1"
+      event.testPhase === "test_2" ? "Edition 2" : "Edition 1"
     );
   }
 
@@ -400,29 +401,63 @@
     return "tone-low";
   }
 
+  function stableHash(value) {
+    let hash = 2166136261;
+    for (let index = 0; index < value.length; index += 1) {
+      hash ^= value.charCodeAt(index);
+      hash = Math.imul(hash, 16777619);
+    }
+    return hash >>> 0;
+  }
+
+  function stableCandidates(event, candidates) {
+    return [...candidates].sort(
+      (first, second) =>
+        stableHash(`${event.id}:${first.id}`) - stableHash(`${event.id}:${second.id}`) ||
+        first.id.localeCompare(second.id)
+    );
+  }
+
   function relatedCasesFor(event, catalog) {
-    if (event.relatedReferences === null) {
-      return { cases: [], isDemo: false };
+    const references = event.relatedReferences || [];
+    const byId = new Map(catalog.map((candidate) => [candidate.id, candidate]));
+    const explicit = references
+      .map((reference) =>
+        typeof reference === "string" ? byId.get(reference) : normalizeEvent(reference)
+      )
+      .filter((candidate) => candidate && candidate.id !== event.id);
+    const selected = new Map();
+
+    explicit.slice(0, 7).forEach((candidate) => {
+      selected.set(candidate.id, { ...candidate, relationshipBasis: "Related" });
+    });
+
+    const sameTheme = stableCandidates(
+      event,
+      catalog.filter(
+        (candidate) =>
+          candidate.id !== event.id &&
+          candidate.theme === event.theme &&
+          !selected.has(candidate.id)
+      )
+    );
+    sameTheme.slice(0, 7 - selected.size).forEach((candidate) => {
+      selected.set(candidate.id, { ...candidate, relationshipBasis: "Theme match" });
+    });
+
+    if (selected.size < 7) {
+      const remaining = stableCandidates(
+        event,
+        catalog.filter(
+          (candidate) => candidate.id !== event.id && !selected.has(candidate.id)
+        )
+      );
+      remaining.slice(0, 7 - selected.size).forEach((candidate) => {
+        selected.set(candidate.id, { ...candidate, relationshipBasis: "Suggested" });
+      });
     }
 
-    const byId = new Map(catalog.map((candidate) => [candidate.id, candidate]));
-    const resolved = event.relatedReferences
-      .map((reference) => {
-        if (typeof reference === "string") {
-          return byId.get(reference) || {
-            id: reference,
-            name: reference,
-            attention: null,
-            testPhase: event.testPhase === "test_2" ? "test_1" : "test_2",
-            unavailable: true,
-          };
-        }
-        return normalizeEvent(reference);
-      })
-      .filter((candidate) => candidate && candidate.id !== event.id);
-    const unique = new Map(resolved.map((candidate) => [candidate.id, candidate]));
-
-    return { cases: [...unique.values()], isDemo: false };
+    return { cases: [...selected.values()].slice(0, 7) };
   }
 
   function createRelatedCases(event, catalog) {
@@ -447,6 +482,14 @@
       );
       const title = node("span", "related-case__title", relatedEvent.name);
       const main = node("span", "related-case__main");
+      const meta = node("span", "related-case__meta");
+      const basis = node(
+        "span",
+        `related-case__basis related-case__basis--${relatedEvent.relationshipBasis
+          .toLowerCase()
+          .replace(" ", "-")}`,
+        relatedEvent.relationshipBasis
+      );
       const scoreValue = relatedEvent.attention;
       const scoreLabel = node(
         "span",
@@ -457,7 +500,8 @@
       if (!relatedEvent.unavailable) {
         card.href = `detail.html?id=${encodeURIComponent(relatedEvent.id)}`;
       }
-      main.append(createPhaseBadge(relatedEvent), title);
+      meta.append(createPhaseBadge(relatedEvent), basis);
+      main.append(meta, title);
       card.append(main, scoreLabel);
       list.appendChild(card);
     });

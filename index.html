@@ -32,39 +32,41 @@
         <span class="filterbar__result" id="filterResult">Showing all events</span>
       </div>
       <div class="filterbar__controls">
-        <label class="filter-control">
-          <span class="filter-control__label">Test</span>
-          <select class="filter-control__select" id="testFilter">
-            <option value="">All tests</option>
-            <option value="test_1">Test 1</option>
-            <option value="test_2">Test 2</option>
-          </select>
-        </label>
-        <label class="filter-control">
+        <div class="filter-control">
+          <span class="filter-control__label">Edition</span>
+          <details class="filter-menu">
+            <summary class="filter-menu__trigger" id="editionFilterSummary">All editions</summary>
+            <div class="filter-menu__options" id="editionFilter" role="group" aria-label="Edition"></div>
+          </details>
+        </div>
+        <div class="filter-control">
           <span class="filter-control__label">Theme</span>
-          <select class="filter-control__select" id="themeFilter">
-            <option value="">All themes</option>
-          </select>
-        </label>
-        <label class="filter-control">
+          <details class="filter-menu">
+            <summary class="filter-menu__trigger" id="themeFilterSummary">All themes</summary>
+            <div class="filter-menu__options" id="themeFilter" role="group" aria-label="Theme"></div>
+          </details>
+        </div>
+        <div class="filter-control">
           <span class="filter-control__label">Region</span>
-          <select class="filter-control__select" id="regionFilter">
-            <option value="">All regions</option>
-          </select>
-        </label>
-        <label class="filter-control">
+          <details class="filter-menu">
+            <summary class="filter-menu__trigger" id="regionFilterSummary">All regions</summary>
+            <div class="filter-menu__options" id="regionFilter" role="group" aria-label="Region"></div>
+          </details>
+        </div>
+        <div class="filter-control">
           <span class="filter-control__label">Stakeholder</span>
-          <select class="filter-control__select" id="stakeholderFilter">
-            <option value="">All stakeholders</option>
-          </select>
-        </label>
+          <details class="filter-menu">
+            <summary class="filter-menu__trigger" id="stakeholderFilterSummary">All stakeholders</summary>
+            <div class="filter-menu__options" id="stakeholderFilter" role="group" aria-label="Stakeholder"></div>
+          </details>
+        </div>
         <button class="filter-reset" id="filterReset" type="button" disabled>Clear filters</button>
       </div>
     </div>
   </section>
 
   <main class="layout" id="layout">
-    <!-- Priority column: top 3 big cards -->
+    <!-- Priority column: top 5 big cards -->
     <section class="priority" aria-label="Priority events">
       <div class="section-head">
         <h2 class="section-head__title">Top Priority</h2>
@@ -81,8 +83,11 @@
         <h2 class="section-head__title">Other Events</h2>
         <p class="section-head__sub">Lower attention, name &amp; score only</p>
       </div>
-      <div class="minor__list" id="minorList">
-        <!-- small cards injected here -->
+      <div class="minor__panel" id="minorPanel">
+        <div class="minor__list" id="minorList">
+          <!-- small cards injected here -->
+        </div>
+        <button class="load-more" id="loadMore" type="button" hidden>Load more</button>
       </div>
     </aside>
   </main>

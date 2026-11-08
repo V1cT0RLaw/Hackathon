@@ -1,5 +1,5 @@
 // Renders the Event Attention dashboard from engine or normalized event data.
-// Top 3 by the supplied Attention score => big cards. The rest => small cards.
+// Top 5 by the supplied Attention score => big cards. The rest => paged small cards.
 
 (function () {
   "use strict";
@@ -148,7 +148,7 @@
     const phaseBadge = element(
       "span",
       `phase-badge phase-badge--${event.testPhase}`,
-      event.testPhase === "test_2" ? "Test 2" : "Test 1"
+      event.testPhase === "test_2" ? "Edition 2" : "Edition 1"
     );
     const title = element("h3", "card__title", event.name);
     const summary = element("p", "card__summary", event.summary);
@@ -202,7 +202,7 @@
     const phaseBadge = element(
       "span",
       `phase-badge phase-badge--${event.testPhase}`,
-      event.testPhase === "test_2" ? "Test 2" : "Test 1"
+      event.testPhase === "test_2" ? "Edition 2" : "Edition 1"
     );
     const name = element("span", "card--small__name", event.name);
     const scoreLabel = element("span", `card--small__score ${toneClass(score)}`);
@@ -236,50 +236,151 @@
     );
   }
 
-  function populateFilter(select, values) {
-    values.forEach((value) => {
-      const option = document.createElement("option");
-      option.value = value;
-      option.textContent = value;
-      select.appendChild(option);
+  const FILTERS = [
+    {
+      groupId: "editionFilter",
+      summaryId: "editionFilterSummary",
+      allLabel: "All editions",
+      pluralLabel: "editions",
+    },
+    {
+      groupId: "themeFilter",
+      summaryId: "themeFilterSummary",
+      allLabel: "All themes",
+      pluralLabel: "themes",
+    },
+    {
+      groupId: "regionFilter",
+      summaryId: "regionFilterSummary",
+      allLabel: "All regions",
+      pluralLabel: "regions",
+    },
+    {
+      groupId: "stakeholderFilter",
+      summaryId: "stakeholderFilterSummary",
+      allLabel: "All stakeholders",
+      pluralLabel: "stakeholders",
+    },
+  ];
+
+  const minorState = {
+    events: [],
+    visibleCount: 0,
+    batchSize: 10,
+  };
+
+  function populateFilter(group, options) {
+    options.forEach(({ value, label }) => {
+      const option = element("label", "filter-option");
+      const checkbox = element("input", "filter-option__input");
+      const marker = element("span", "filter-option__marker");
+      const text = element("span", "filter-option__text", label);
+
+      checkbox.type = "checkbox";
+      checkbox.value = value;
+      option.append(checkbox, marker, text);
+      group.appendChild(option);
     });
+  }
+
+  function selectedValues(groupId) {
+    return [...document.querySelectorAll(`#${groupId} input:checked`)].map(
+      (input) => input.value
+    );
   }
 
   function selectedFilters() {
     return {
-      testPhase: document.getElementById("testFilter").value,
-      theme: document.getElementById("themeFilter").value,
-      region: document.getElementById("regionFilter").value,
-      stakeholder: document.getElementById("stakeholderFilter").value,
+      testPhase: selectedValues("editionFilter"),
+      themes: selectedValues("themeFilter"),
+      regions: selectedValues("regionFilter"),
+      stakeholders: selectedValues("stakeholderFilter"),
     };
+  }
+
+  function updateFilterSummary(filter) {
+    const checked = [
+      ...document.querySelectorAll(`#${filter.groupId} input:checked`),
+    ];
+    const summary = document.getElementById(filter.summaryId);
+
+    if (!checked.length) summary.textContent = filter.allLabel;
+    else if (checked.length === 1) {
+      summary.textContent = checked[0].closest("label").querySelector(
+        ".filter-option__text"
+      ).textContent;
+    } else summary.textContent = `${checked.length} ${filter.pluralLabel}`;
+  }
+
+  function matchesAny(selected, values) {
+    return !selected.length || selected.some((value) => values.includes(value));
+  }
+
+  function measureMinorBatch(priorityList, minorList, loadMore, events) {
+    if (!events.length) return 0;
+    if (window.innerWidth <= 900) return Math.min(10, events.length);
+
+    const probe = smallCard(events[0]);
+    probe.classList.add("card--measure");
+    minorList.appendChild(probe);
+    const cardHeight = probe.getBoundingClientRect().height;
+    probe.remove();
+
+    const gap = parseFloat(getComputedStyle(minorList).rowGap) || 0;
+    const buttonSpace = loadMore.getBoundingClientRect().height || 42;
+    const available = priorityList.getBoundingClientRect().height - buttonSpace - 14;
+    const fitting = Math.floor((available + gap) / (cardHeight + gap));
+
+    return Math.max(1, Math.min(fitting, events.length));
+  }
+
+  function renderMinorPage() {
+    const minorList = document.getElementById("minorList");
+    const loadMore = document.getElementById("loadMore");
+    minorList.replaceChildren();
+
+    minorState.events.slice(0, minorState.visibleCount).forEach((event) => {
+      minorList.appendChild(smallCard(event));
+    });
+
+    if (!minorState.events.length) {
+      minorList.appendChild(
+        element("p", "section-head__sub", "No additional matching events.")
+      );
+    }
+
+    const remaining = Math.max(0, minorState.events.length - minorState.visibleCount);
+    loadMore.hidden = remaining === 0;
+    if (remaining) {
+      const nextCount = Math.min(minorState.batchSize, remaining);
+      loadMore.textContent = `Load ${nextCount} more · ${remaining} remaining`;
+    }
   }
 
   function render(events) {
     const filters = selectedFilters();
-    const hasFilters = Object.values(filters).some(Boolean);
+    const hasFilters = Object.values(filters).some((values) => values.length);
     const filtered = events.filter(
       (event) =>
-        (!filters.testPhase || event.testPhase === filters.testPhase) &&
-        (!filters.theme || event.theme === filters.theme) &&
-        (!filters.region || event.regions.includes(filters.region)) &&
-        (!filters.stakeholder || event.stakeholders.includes(filters.stakeholder))
+        matchesAny(filters.testPhase, [event.testPhase]) &&
+        matchesAny(filters.themes, [event.theme]) &&
+        matchesAny(filters.regions, event.regions) &&
+        matchesAny(filters.stakeholders, event.stakeholders)
     );
-    const top = filtered.slice(0, 3);
-    const rest = filtered.slice(3);
+    const top = filtered.slice(0, 5);
+    const rest = filtered.slice(5);
     const priorityList = document.getElementById("priorityList");
     const minorList = document.getElementById("minorList");
+    const minorPanel = document.getElementById("minorPanel");
+    const loadMore = document.getElementById("loadMore");
     const count = document.getElementById("eventCount");
     const result = document.getElementById("filterResult");
     const reset = document.getElementById("filterReset");
 
     priorityList.replaceChildren();
     minorList.replaceChildren();
-
     top.forEach((event, index) => {
       priorityList.appendChild(bigCard(event, index + 1));
-    });
-    rest.forEach((event) => {
-      minorList.appendChild(smallCard(event));
     });
 
     if (!top.length) {
@@ -287,11 +388,14 @@
         element("p", "filter-empty", "No events match these filters.")
       );
     }
-    if (!rest.length) {
-      minorList.appendChild(
-        element("p", "section-head__sub", "No additional matching events.")
-      );
-    }
+
+    minorState.events = rest;
+    minorState.batchSize = measureMinorBatch(priorityList, minorList, loadMore, rest);
+    minorState.visibleCount = minorState.batchSize;
+    minorPanel.style.minHeight = window.innerWidth > 900
+      ? `${Math.ceil(priorityList.getBoundingClientRect().height)}px`
+      : "";
+    renderMinorPage();
 
     const eventLabel = filtered.length === 1 ? "event" : "events";
     count.textContent = hasFilters
@@ -314,33 +418,85 @@
         second._score - first._score || first.id.localeCompare(second.id)
     );
 
-    const testFilter = document.getElementById("testFilter");
+    const editionFilter = document.getElementById("editionFilter");
     const themeFilter = document.getElementById("themeFilter");
     const regionFilter = document.getElementById("regionFilter");
     const stakeholderFilter = document.getElementById("stakeholderFilter");
     const reset = document.getElementById("filterReset");
+    const loadMore = document.getElementById("loadMore");
     const minorScoreToggle = document.getElementById("minorScoreToggle");
 
     window.MinorScorePreference.bind(minorScoreToggle);
-    populateFilter(themeFilter, uniqueSorted(events.map((event) => event.theme)));
+    populateFilter(editionFilter, [
+      { value: "test_1", label: "Edition 1" },
+      { value: "test_2", label: "Edition 2" },
+    ]);
+    populateFilter(
+      themeFilter,
+      uniqueSorted(events.map((event) => event.theme)).map((value) => ({
+        value,
+        label: value,
+      }))
+    );
     populateFilter(
       regionFilter,
-      uniqueSorted(events.flatMap((event) => event.regions))
+      uniqueSorted(events.flatMap((event) => event.regions)).map((value) => ({
+        value,
+        label: value,
+      }))
     );
     populateFilter(
       stakeholderFilter,
-      uniqueSorted(events.flatMap((event) => event.stakeholders))
+      uniqueSorted(events.flatMap((event) => event.stakeholders)).map((value) => ({
+        value,
+        label: value,
+      }))
     );
 
-    [testFilter, themeFilter, regionFilter, stakeholderFilter].forEach((filter) => {
-      filter.addEventListener("change", () => render(events));
+    FILTERS.forEach((filter) => {
+      const group = document.getElementById(filter.groupId);
+      group.addEventListener("change", () => {
+        updateFilterSummary(filter);
+        render(events);
+      });
     });
+
+    document.querySelectorAll(".filter-menu").forEach((menu) => {
+      menu.addEventListener("toggle", () => {
+        if (!menu.open) return;
+        document.querySelectorAll(".filter-menu[open]").forEach((other) => {
+          if (other !== menu) other.removeAttribute("open");
+        });
+      });
+    });
+
+    document.addEventListener("click", (clickEvent) => {
+      if (clickEvent.target.closest(".filter-menu")) return;
+      document.querySelectorAll(".filter-menu[open]").forEach((menu) => {
+        menu.removeAttribute("open");
+      });
+    });
+
     reset.addEventListener("click", () => {
-      testFilter.value = "";
-      themeFilter.value = "";
-      regionFilter.value = "";
-      stakeholderFilter.value = "";
+      document.querySelectorAll(".filter-option__input:checked").forEach((input) => {
+        input.checked = false;
+      });
+      FILTERS.forEach(updateFilterSummary);
       render(events);
+    });
+
+    loadMore.addEventListener("click", () => {
+      minorState.visibleCount = Math.min(
+        minorState.visibleCount + minorState.batchSize,
+        minorState.events.length
+      );
+      renderMinorPage();
+    });
+
+    let resizeTimer;
+    window.addEventListener("resize", () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => render(events), 120);
     });
 
     render(events);
