@@ -169,7 +169,33 @@
       );
     }
 
+    if (window.PROTOTYPE_SCORE_CONFIG?.attentionOverrides?.[event.id] !== undefined) {
+      event.attention = Number(
+        window.PROTOTYPE_SCORE_CONFIG.attentionOverrides[event.id]
+      );
+    }
+
     return event.id ? event : null;
+  }
+
+  function applyAttentionDisplaySpread(events) {
+    const spread = window.PROTOTYPE_SCORE_CONFIG?.attentionDisplaySpread;
+    if (!spread) return;
+
+    const lastTopIndex = spread.topScores.length - 1;
+    const remainingCount = Math.max(1, events.length - spread.topScores.length);
+    events.forEach((event, index) => {
+      if (index <= lastTopIndex) {
+        event.attention = spread.topScores[index];
+        return;
+      }
+      const remainingIndex = index - spread.topScores.length;
+      const progress = remainingIndex / Math.max(1, remainingCount - 1);
+      event.attention = Math.round(
+        spread.remainingStart +
+          (spread.remainingEnd - spread.remainingStart) * progress
+      );
+    });
   }
 
   function node(tag, className, content) {
@@ -696,6 +722,11 @@
 
     const id = new URLSearchParams(window.location.search).get("id");
     const catalog = sourceEvents().map(normalizeEvent).filter(Boolean);
+    catalog.sort(
+      (first, second) =>
+        second.attention - first.attention || first.id.localeCompare(second.id)
+    );
+    applyAttentionDisplaySpread(catalog);
     const event = catalog.find((candidate) => candidate.id === id);
 
     if (event) renderEvent(event, catalog);

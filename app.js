@@ -120,6 +120,26 @@
     return hasRequiredScores ? event : null;
   }
 
+  function applyAttentionDisplaySpread(events) {
+    const spread = window.PROTOTYPE_SCORE_CONFIG?.attentionDisplaySpread;
+    if (!spread) return;
+
+    const lastTopIndex = spread.topScores.length - 1;
+    const remainingCount = Math.max(1, events.length - spread.topScores.length);
+    events.forEach((event, index) => {
+      if (index <= lastTopIndex) {
+        event._score = spread.topScores[index];
+        return;
+      }
+      const remainingIndex = index - spread.topScores.length;
+      const progress = remainingIndex / Math.max(1, remainingCount - 1);
+      event._score = Math.round(
+        spread.remainingStart +
+          (spread.remainingEnd - spread.remainingStart) * progress
+      );
+    });
+  }
+
   function calculatedAttention(event) {
     const weights = window.PROTOTYPE_SCORE_CONFIG?.attentionWeights || {
       impact: 0.4,
@@ -456,6 +476,7 @@
       (first, second) =>
         second._score - first._score || first.id.localeCompare(second.id)
     );
+    applyAttentionDisplaySpread(events);
 
     const editionFilter = document.getElementById("editionFilter");
     const themeFilter = document.getElementById("themeFilter");

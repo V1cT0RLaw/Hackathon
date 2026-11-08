@@ -7,10 +7,10 @@ window.PROTOTYPE_SCORE_CONFIG = {
     relevance: 0.4,
     confidence: 0.2,
   },
-  attentionOverrides: {
-    "CG-2026-001": 96,
-    "CG-2026-002": 95,
-    "CG-2026-003": 95,
+  attentionDisplaySpread: {
+    topScores: [96, 94, 91, 89, 87],
+    remainingStart: 86,
+    remainingEnd: 42,
   },
   edition2SpreadPillars: {
     "CG-2026-140": { impact: 93, relevance: 100, confidence: 87 },
