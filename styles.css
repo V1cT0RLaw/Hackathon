@@ -1379,3 +1379,13 @@ body { background: var(--bg); color: var(--text); }
   background: #c9f1e1;
   border-color: #258c70;
 }
+
+/* Stronger score-panel separation and light-mode score contrast */
+.attention,
+.detail-scores {
+  background: #d3dde9;
+}
+.tone-mid,
+.card--small__score.tone-mid {
+  color: #8a5a00;
+}

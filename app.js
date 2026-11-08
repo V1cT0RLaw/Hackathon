@@ -111,6 +111,12 @@
       (score) => score !== null
     );
 
+    if (window.PROTOTYPE_SCORE_CONFIG?.attentionOverrides?.[event.id] !== undefined) {
+      event.attention = Number(
+        window.PROTOTYPE_SCORE_CONFIG.attentionOverrides[event.id]
+      );
+    }
+
     return hasRequiredScores ? event : null;
   }
 

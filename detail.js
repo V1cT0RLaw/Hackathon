@@ -163,6 +163,12 @@
       );
     }
 
+    if (window.PROTOTYPE_SCORE_CONFIG?.attentionOverrides?.[event.id] !== undefined) {
+      event.attention = Number(
+        window.PROTOTYPE_SCORE_CONFIG.attentionOverrides[event.id]
+      );
+    }
+
     return event.id ? event : null;
   }
 
