@@ -1389,3 +1389,42 @@ body { background: var(--bg); color: var(--text); }
 .card--small__score.tone-mid {
   color: #8a5a00;
 }
+
+/* ---------- Score and compact-card readability ---------- */
+.attention__value {
+  font-weight: 800;
+}
+.attention__label {
+  color: #334155;
+  font-weight: 800;
+}
+.subscore__name {
+  color: #334155;
+  font-weight: 650;
+}
+.subscore__val {
+  color: #172033;
+  font-weight: 800;
+}
+
+.card--small {
+  min-height: 76px;
+  padding: 17px 18px;
+  align-items: flex-start;
+}
+.card--small__main {
+  align-items: flex-start;
+}
+.card--small__name {
+  display: -webkit-box;
+  font-size: 15px;
+  font-weight: 650;
+  line-height: 1.35;
+  white-space: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.card--small__score {
+  margin-top: 1px;
+  font-weight: 800;
+}
