@@ -258,7 +258,7 @@
     const inner = node("div", "topbar__inner");
     const brand = node("a", "brand brand--link");
     const dot = node("span", "brand__dot");
-    const title = node("span", "brand__title", "Event Attention");
+    const title = node("span", "brand__title", "Cargo Intelligence Engine");
     const actions = node("div", "topbar__actions");
     const toggle = node("label", "score-toggle");
     const toggleInput = node("input", "score-toggle__input");

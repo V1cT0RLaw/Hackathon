@@ -1428,3 +1428,32 @@ body { background: var(--bg); color: var(--text); }
   margin-top: 1px;
   font-weight: 800;
 }
+
+/* ---------- Larger minor cards and header contrast ---------- */
+@media (min-width: 901px) {
+  .layout { grid-template-columns: minmax(0, 1fr) 420px; }
+}
+.card--small {
+  min-height: 104px;
+  padding: 20px 22px;
+}
+.card--small__main {
+  gap: 10px;
+}
+.card--small__name {
+  font-size: 14px;
+  line-height: 1.4;
+  -webkit-line-clamp: 3;
+}
+.card--small__score {
+  min-width: 50px;
+  padding: 7px 10px;
+  font-size: 18px;
+}
+.card--small__score small { font-size: 10px; }
+.chip {
+  color: #065f46;
+  background: #d1fae5;
+  border-color: #059669;
+  font-weight: 800;
+}
