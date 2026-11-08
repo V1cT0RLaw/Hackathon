@@ -150,7 +150,18 @@
     event.impact = adjustedScore(event.impact, event.testPhase);
     event.relevance = adjustedScore(event.relevance, event.testPhase);
     event.confidence = adjustedScore(event.confidence, event.testPhase);
-    if (event.testPhase === "test_2") event.attention = calculatedAttention(event);
+    if (event.testPhase === "test_2") {
+      const spreadPillars = window.PROTOTYPE_SCORE_CONFIG?.edition2SpreadPillars?.[event.id];
+      if (spreadPillars) {
+        event.impact = spreadPillars.impact;
+        event.relevance = spreadPillars.relevance;
+        event.confidence = spreadPillars.confidence;
+      }
+      event.attention = Number(
+        window.PROTOTYPE_SCORE_CONFIG?.edition2SpreadAttention?.[event.id] ??
+          calculatedAttention(event)
+      );
+    }
 
     return event.id ? event : null;
   }

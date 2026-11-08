@@ -1,25 +1,6 @@
 // Test 2 events supplied by the Phase 2 engine output.
 window.PHASE2_EVENTS = [
   {
-    event_id: "CG-2026-141",
-    headline: "Cathay Cargo September tonnage rises 14.2% year on year",
-    summary: "October reporting of Cathay’s September 2026 traffic figures says the carrier transported 154,041 tonnes of cargo, up 14.2% year on year, while available freight tonne kilometres rose 5.3%. These are carrier-wide figures, not route-level results.",
-    theme: "Market & Demand",
-    region_tags: ["GBA"],
-    scores: { impact: 78, relevance: 95, confidence: 84, calibrated_impact: 78, calibrated_relevance: 95, calibrated_confidence: 84, attention: 86 },
-    related_past_events: [],
-    calibration_reason: "No sufficiently comparable Edition 1 feedback was applied; the calibrated scores therefore remain equal to the independent initial assessment.",
-    why_it_matters: ["This is a directly relevant carrier-wide traffic update.", "The report does not establish performance or profitability for a specific route or product."],
-    recommended_actions: ["Monitor future Cathay traffic releases.", "Review the aggregate indicators alongside internal market analysis."],
-    relevant_parties: ["Commercial / Sales", "Network / Planning"],
-    sources: [
-      { title: "The Cathay Group releases traffic figures for September 2026", url: "https://news.cathaypacific.com/the-cathay-group-releases-traffic-figures-for-september-2026-141ky5" },
-      { title: "Cathay Cargo volumes rise 14%, passengers up 9% in September", url: "https://portcalls.com/cathay-cargo-volumes-rise-14-passengers-up-9-in-september/" },
-      { title: "Cathay Cargo increases September tonnage by 14.2%", url: "https://in-supply.co.uk/cathay-cargo-increases-september-tonnage-by-14-2/" },
-      { title: "Cathay Cargo September Tonnage Rises 14.2% to 154,041 Tonnes", url: "https://www.cargoconnect.co.in/air-cargo/cathay-cargo-september-tonnage-rises-142-to-154041-tonnes" }
-    ]
-  },
-  {
     event_id: "CG-2026-140",
     headline: "Hong Kong airport September cargo rises 6.3% year on year",
     summary: "CargoConnect reported on 22 October that Hong Kong International Airport handled 433,000 tonnes of cargo in September 2026, up 6.3% year on year; transshipments rose 26.9%. The figures cover the entire airport, not Cathay Cargo alone.",

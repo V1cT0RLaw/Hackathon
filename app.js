@@ -94,7 +94,18 @@
     event.relevance = event.relevance === null
       ? null
       : parseScore(event.relevance + adjustment);
-    if (event.testPhase === "test_2") event.attention = calculatedAttention(event);
+    if (event.testPhase === "test_2") {
+      const spreadPillars = window.PROTOTYPE_SCORE_CONFIG?.edition2SpreadPillars?.[event.id];
+      if (spreadPillars) {
+        event.impact = spreadPillars.impact;
+        event.relevance = spreadPillars.relevance;
+        event.confidence = spreadPillars.confidence;
+      }
+      event.attention = Number(
+        window.PROTOTYPE_SCORE_CONFIG?.edition2SpreadAttention?.[event.id] ??
+          calculatedAttention(event)
+      );
+    }
 
     const hasRequiredScores = [event.impact, event.confidence, event.relevance].every(
       (score) => score !== null
