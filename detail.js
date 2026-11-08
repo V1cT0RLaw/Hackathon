@@ -11,6 +11,27 @@
     return Number.isFinite(parsed) ? Math.min(100, Math.max(0, parsed)) : null;
   }
 
+  function calculatedAttention(event) {
+    const weights = window.PROTOTYPE_SCORE_CONFIG?.attentionWeights || {
+      impact: 0.4,
+      relevance: 0.4,
+      confidence: 0.2,
+    };
+    return Math.round(
+      event.impact * weights.impact +
+        event.relevance * weights.relevance +
+        event.confidence * weights.confidence
+    );
+  }
+
+  function adjustedScore(value, testPhase) {
+    if (value === null) return null;
+    const adjustment = testPhase === "test_2"
+      ? Number(window.PROTOTYPE_SCORE_CONFIG?.edition2PillarAdjustment || 0)
+      : 0;
+    return score(value + adjustment);
+  }
+
   function compact(values) {
     return values.map((value) => text(value)).filter(Boolean);
   }
@@ -126,6 +147,11 @@
       ),
     };
 
+    event.impact = adjustedScore(event.impact, event.testPhase);
+    event.relevance = adjustedScore(event.relevance, event.testPhase);
+    event.confidence = adjustedScore(event.confidence, event.testPhase);
+    if (event.testPhase === "test_2") event.attention = calculatedAttention(event);
+
     return event.id ? event : null;
   }
 
@@ -169,6 +195,19 @@
     );
 
     return [...current, ...historical, ...embeddedRelated];
+  }
+
+  function summaryFilterUrl(type, value) {
+    const params = new URLSearchParams();
+    params.set(type, value);
+    return `index.html?${params.toString()}`;
+  }
+
+  function createFilterTag(textValue, type, value, className) {
+    const link = node("a", className, textValue);
+    link.href = summaryFilterUrl(type, value);
+    link.title = `View events filtered by ${textValue}`;
+    return link;
   }
 
   function createHeader() {
@@ -549,34 +588,12 @@
       const regionTags = node("div", "region-tags");
 
       event.regions.forEach((region) => {
-        regionTags.appendChild(node("span", "region-tag", region));
+        regionTags.appendChild(
+          createFilterTag(region, "region", region, "region-tag")
+        );
       });
       regionMeta.append(regionLabel, regionTags);
       content.appendChild(regionMeta);
-    }
-
-    if (event.calibrationReason) {
-      const calibration = node("section", "calibration-note");
-      const calibrationTitle = node("h2", "calibration-note__title", "Calibration");
-      const comparison = node("div", "calibration-note__scores");
-      const reason = node("p", "calibration-note__reason", event.calibrationReason);
-      const comparisons = [
-        ["Impact", event.originalScores.impact, event.impact],
-        ["Relevance", event.originalScores.relevance, event.relevance],
-        ["Confidence", event.originalScores.confidence, event.confidence],
-      ];
-
-      comparisons.forEach(([label, original, calibrated]) => {
-        comparison.appendChild(
-          node(
-            "span",
-            "calibration-note__score",
-            `${label}: ${original ?? "—"} → ${calibrated ?? "—"}`
-          )
-        );
-      });
-      calibration.append(calibrationTitle, comparison, reason);
-      content.appendChild(calibration);
     }
 
     const feedbackArea = node("div", "feedback-entry");
@@ -609,7 +626,14 @@
       const tags = node("div", "stakeholder-tags");
 
       event.stakeholders.forEach((stakeholder) => {
-        tags.appendChild(node("span", "stakeholder-tag", stakeholder));
+        tags.appendChild(
+          createFilterTag(
+            stakeholder,
+            "stakeholder",
+            stakeholder,
+            "stakeholder-tag"
+          )
+        );
       });
       stakeholderSection.append(stakeholderTitle, tags);
       content.appendChild(stakeholderSection);

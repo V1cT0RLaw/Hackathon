@@ -1266,3 +1266,23 @@ body {
 @media (max-width: 900px) {
   .minor__panel { min-height: 0 !important; }
 }
+
+/* Filterable detail tags */
+.region-tag,
+.stakeholder-tag {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color .16s ease, background .16s ease, transform .16s ease;
+}
+.region-tag:hover,
+.stakeholder-tag:hover {
+  border-color: var(--accent);
+  background: rgba(91,140,255,.18);
+  transform: translateY(-1px);
+}
+.region-tag:focus-visible,
+.stakeholder-tag:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}

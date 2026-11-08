@@ -82,6 +82,20 @@
       attention: parseScore(scoreData.attention ?? raw.Attention),
     };
 
+    const adjustment = event.testPhase === "test_2"
+      ? Number(window.PROTOTYPE_SCORE_CONFIG?.edition2PillarAdjustment || 0)
+      : 0;
+    event.impact = event.impact === null
+      ? null
+      : parseScore(event.impact + adjustment);
+    event.confidence = event.confidence === null
+      ? null
+      : parseScore(event.confidence + adjustment);
+    event.relevance = event.relevance === null
+      ? null
+      : parseScore(event.relevance + adjustment);
+    if (event.testPhase === "test_2") event.attention = calculatedAttention(event);
+
     const hasRequiredScores = [event.impact, event.confidence, event.relevance].every(
       (score) => score !== null
     );
@@ -90,7 +104,11 @@
   }
 
   function calculatedAttention(event) {
-    const weights = { impact: 0.4, confidence: 0.2, relevance: 0.4 };
+    const weights = window.PROTOTYPE_SCORE_CONFIG?.attentionWeights || {
+      impact: 0.4,
+      confidence: 0.2,
+      relevance: 0.4,
+    };
     return Math.round(
       event.impact * weights.impact +
         event.confidence * weights.confidence +
@@ -242,24 +260,28 @@
       summaryId: "editionFilterSummary",
       allLabel: "All editions",
       pluralLabel: "editions",
+      paramKey: "edition",
     },
     {
       groupId: "themeFilter",
       summaryId: "themeFilterSummary",
       allLabel: "All themes",
       pluralLabel: "themes",
+      paramKey: "theme",
     },
     {
       groupId: "regionFilter",
       summaryId: "regionFilterSummary",
       allLabel: "All regions",
       pluralLabel: "regions",
+      paramKey: "region",
     },
     {
       groupId: "stakeholderFilter",
       summaryId: "stakeholderFilterSummary",
       allLabel: "All stakeholders",
       pluralLabel: "stakeholders",
+      paramKey: "stakeholder",
     },
   ];
 
@@ -459,6 +481,17 @@
         updateFilterSummary(filter);
         render(events);
       });
+    });
+
+    const params = new URLSearchParams(window.location.search);
+    FILTERS.forEach((filter) => {
+      const values = params.getAll(filter.paramKey);
+      document
+        .querySelectorAll(`#${filter.groupId} .filter-option__input`)
+        .forEach((input) => {
+          input.checked = values.includes(input.value);
+        });
+      updateFilterSummary(filter);
     });
 
     document.querySelectorAll(".filter-menu").forEach((menu) => {
