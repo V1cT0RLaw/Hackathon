@@ -1348,3 +1348,34 @@ body { background: var(--bg); color: var(--text); }
 .feedback-trigger:hover,
 .feedback-button--submit:hover,
 .detail-button:hover { background: #1d4ed8; }
+
+/* Stronger light-mode contrast */
+:root {
+  --bg: #e7edf5;
+  --surface-2: #e9eef5;
+  --border: #b5c1d0;
+}
+.card,
+.detail-card,
+.filter-menu__trigger,
+.filter-menu__options,
+.card--small__score,
+.related-case,
+.feedback-score,
+.feedback-comment__input {
+  border-color: var(--border);
+}
+.topbar,
+.filterbar { border-bottom-color: #aebaca; }
+
+/* High-contrast edition badges */
+.phase-badge--test_1 {
+  color: #684500;
+  background: #ffefb8;
+  border-color: #b27b16;
+}
+.phase-badge--test_2 {
+  color: #075b48;
+  background: #c9f1e1;
+  border-color: #258c70;
+}
