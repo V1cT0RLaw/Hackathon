@@ -175,6 +175,13 @@
       );
     }
 
+    if (window.PROTOTYPE_SCORE_CONFIG?.attentionOverrides?.[event.id] !== undefined) {
+      event.attention = Number(
+        window.PROTOTYPE_SCORE_CONFIG.attentionOverrides[event.id]
+      );
+    }
+    alignPillarsToAttention(event);
+
     return event.id ? event : null;
   }
 
@@ -187,6 +194,7 @@
     events.forEach((event, index) => {
       if (index <= lastTopIndex) {
         event.attention = spread.topScores[index];
+        alignPillarsToAttention(event);
         return;
       }
       const remainingIndex = index - spread.topScores.length;
@@ -195,7 +203,29 @@
         spread.remainingStart +
           (spread.remainingEnd - spread.remainingStart) * progress
       );
+      alignPillarsToAttention(event);
     });
+  }
+
+  function alignPillarsToAttention(event) {
+    if (
+      event.attention === null ||
+      event.impact === null ||
+      event.confidence === null
+    ) return;
+
+    const weights = window.PROTOTYPE_SCORE_CONFIG?.attentionWeights || {
+      impact: 0.4,
+      relevance: 0.4,
+      confidence: 0.2,
+    };
+    const solvedRelevance = Math.round(
+      (event.attention -
+        event.impact * weights.impact -
+        event.confidence * weights.confidence) /
+        weights.relevance
+    );
+    event.relevance = score(solvedRelevance);
   }
 
   function node(tag, className, content) {

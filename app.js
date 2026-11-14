@@ -116,7 +116,7 @@
         window.PROTOTYPE_SCORE_CONFIG.attentionOverrides[event.id]
       );
     }
-
+    alignPillarsToAttention(event);
     return hasRequiredScores ? event : null;
   }
 
@@ -129,6 +129,8 @@
     events.forEach((event, index) => {
       if (index <= lastTopIndex) {
         event._score = spread.topScores[index];
+        event.attention = event._score;
+        alignPillarsToAttention(event);
         return;
       }
       const remainingIndex = index - spread.topScores.length;
@@ -137,7 +139,30 @@
         spread.remainingStart +
           (spread.remainingEnd - spread.remainingStart) * progress
       );
+      event.attention = event._score;
+      alignPillarsToAttention(event);
     });
+  }
+
+  function alignPillarsToAttention(event) {
+    if (
+      event.attention === null ||
+      event.impact === null ||
+      event.confidence === null
+    ) return;
+
+    const weights = window.PROTOTYPE_SCORE_CONFIG?.attentionWeights || {
+      impact: 0.4,
+      relevance: 0.4,
+      confidence: 0.2,
+    };
+    const solvedRelevance = Math.round(
+      (event.attention -
+        event.impact * weights.impact -
+        event.confidence * weights.confidence) /
+        weights.relevance
+    );
+    event.relevance = parseScore(solvedRelevance);
   }
 
   function calculatedAttention(event) {
