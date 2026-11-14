@@ -2,6 +2,9 @@
 
 A browser-based prototype for turning cargo-industry developments into a ranked, explainable event dashboard.
 
+- **Prototype:** [Open the live Cargo Intelligence Engine](https://v1c0rlaw.github.io/Hackathon/)
+- **Codebase:** [View the GitHub repository and source code](https://github.com/V1cT0RLaw/Hackathon/tree/feat/integrate-test-events)
+
 The prototype combines Edition 1 historical events and Edition 2 current events. Users can filter the catalogue, open event details, inspect scores and sources, navigate related cases, and submit anonymous feedback.
 
 ## What the prototype demonstrates
